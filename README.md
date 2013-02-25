@@ -18,8 +18,7 @@ Currently, we provide Java and Ruby examples, but you can develop in whatever la
 	git clone git@github.com:forcedotcom/SalesforceCanvasFrameworkSDK.git
 
 ### How to use the Canvas JavaScript SDK
-To use this SDK, simply include the canvas-all.js file in your page:
-	<script type="text/javascript" src="/sdk/js/canvas-all.js"></script>
+To use this SDK, simply include the canvas-all.js file in your page.
 
 ### Documentation
 You can find JSDoc generated documentation for the JavaScript function in the docs directory.
