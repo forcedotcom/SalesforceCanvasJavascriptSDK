@@ -54,8 +54,8 @@
 <span class='line'> 47</span> </span><span class="WHIT">        </span><span class="COMM">/**
 <span class='line'> 48</span>          * @name Sfdc.canvas.oauth#login
 <span class='line'> 49</span>          * @function
-<span class='line'> 50</span>          * @description Opens the OAuth popup window to retrieve an OAuth token
-<span class='line'> 51</span>          * @param {Object} ctx  Context object that contains the url, the response type, the client id and callback url
+<span class='line'> 50</span>          * @description Opens the OAuth popup window to retrieve an OAuth token.
+<span class='line'> 51</span>          * @param {Object} ctx  The context object that contains the URL, the response type, the client ID, and the callback URL
 <span class='line'> 52</span>          * @docneedsimprovement
 <span class='line'> 53</span>          * @example
 <span class='line'> 54</span>          * function clickHandler(e)
@@ -92,15 +92,15 @@
 <span class='line'> 85</span> </span><span class="WHIT">        </span><span class="COMM">/**
 <span class='line'> 86</span>          * @name Sfdc.canvas.oauth#token
 <span class='line'> 87</span>          * @function
-<span class='line'> 88</span>          * @description Sets, gets or removes the &lt;code>access_token&lt;/code> from this JS object &lt;br>
-<span class='line'> 89</span>          &lt;p>This function does one of three things &lt;br>
-<span class='line'> 90</span>          If the 't' parameter is not passed in, the current value for the &lt;code>access_token&lt;/code> value is returned. &lt;br>
-<span class='line'> 91</span>          If the the 't' parameter is null, the &lt;code>access_token&lt;/code> value is removed. &lt;br>
-<span class='line'> 92</span>          Note: for longer term storage of the OAuth token store it server side in the session, access tokens
-<span class='line'> 93</span>          should never be stored in cookies.
-<span class='line'> 94</span>          Otherwise the &lt;code>access_token&lt;/code>  value is set to the 't' parameter and then returned.
-<span class='line'> 95</span>          * @param {String} [t] The oauth token to set as the &lt;code>access_token&lt;/code> value
-<span class='line'> 96</span>          * @returns {String} The resulting &lt;code>access_token&lt;/code> value if set, otherwise null
+<span class='line'> 88</span>          * @description Sets, gets, or removes the &lt;code>access_token&lt;/code> from this JavaScript object. &lt;br>
+<span class='line'> 89</span>          &lt;p>This function does one of three things: &lt;br>
+<span class='line'> 90</span>          	1) If the 't' parameter isn't passed in, the current value for the &lt;code>access_token&lt;/code> value is returned. &lt;br>
+<span class='line'> 91</span>          	2) If the the 't' parameter is null, the &lt;code>access_token&lt;/code> value is removed. &lt;br>
+<span class='line'> 92</span>          	3) Otherwise the &lt;code>access_token&lt;/code>  value is set to the 't' parameter and then returned.&lt;br>&lt;br>
+<span class='line'> 93</span>          	Note: for longer-term storage of the OAuth token, store it server-side in the session.  Access tokens
+<span class='line'> 94</span>              should never be stored in cookies.
+<span class='line'> 95</span>          * @param {String} [t] The OAuth token to set as the &lt;code>access_token&lt;/code> value
+<span class='line'> 96</span>          * @returns {String} The resulting &lt;code>access_token&lt;/code> value if set; otherwise null
 <span class='line'> 97</span>          */</span><span class="WHIT">
 <span class='line'> 98</span> </span><span class="WHIT">        </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">token</span><span class="PUNC">(</span><span class="NAME">t</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'> 99</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">arguments.length</span><span class="WHIT"> </span><span class="PUNC">===</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
@@ -116,13 +116,13 @@
 <span class='line'>109</span> </span><span class="WHIT">        </span><span class="COMM">/**
 <span class='line'>110</span>          * @name Sfdc.canvas.oauth#instance
 <span class='line'>111</span>          * @function
-<span class='line'>112</span>          * @description Sets, gets or removes the &lt;code>instance_url&lt;/code> cookie &lt;br>
-<span class='line'>113</span>          &lt;p> This function does one of three things &lt;br>
-<span class='line'>114</span>          If the 'i' parameter is not passed in, the current value for the &lt;code>instance_url&lt;/code> cookie is returned. &lt;br>
-<span class='line'>115</span>          If the 'i' parameter is null, the &lt;code>instance_url&lt;/code> cookie is removed. &lt;br>
-<span class='line'>116</span>          Otherwise the &lt;code>instance_url&lt;/code> cookie value is set to the 'i' parameter and then returned.
+<span class='line'>112</span>          * @description Sets, gets, or removes the &lt;code>instance_url&lt;/code> cookie. &lt;br>
+<span class='line'>113</span>          &lt;p> This function does one of three things: &lt;br>
+<span class='line'>114</span>          1) If the 'i' parameter is not passed in, the current value for the &lt;code>instance_url&lt;/code> cookie is returned. &lt;br>
+<span class='line'>115</span>          2) If the 'i' parameter is null, the &lt;code>instance_url&lt;/code> cookie is removed. &lt;br>
+<span class='line'>116</span>          3) Otherwise, the &lt;code>instance_url&lt;/code> cookie value is set to the 'i' parameter and then returned.
 <span class='line'>117</span>          * @param {String} [i] The value to set as the &lt;code>instance_url&lt;/code> cookie
-<span class='line'>118</span>          * @returns {String} The resulting &lt;code>instance_url&lt;/code> cookie value if set, otherwise null
+<span class='line'>118</span>          * @returns {String} The resulting &lt;code>instance_url&lt;/code> cookie value if set; otherwise null
 <span class='line'>119</span>          */</span><span class="WHIT">
 <span class='line'>120</span> </span><span class="WHIT">        </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">instanceUrl</span><span class="PUNC">(</span><span class="NAME">i</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'>121</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">arguments.length</span><span class="WHIT"> </span><span class="PUNC">===</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
@@ -194,9 +194,9 @@
 <span class='line'>187</span>          * @name Sfdc.canvas.oauth#childWindowUnloadNotification
 <span class='line'>188</span>          * @function
 <span class='line'>189</span>          * @description Parses the hash value that is passed in and sets the
-<span class='line'>190</span>          &lt;code>access_token&lt;/code> and &lt;code>instance_url&lt;/code> cookies if they exist.  Use during
-<span class='line'>191</span>          User-Agent OAuth Authentication Flow to pass the OAuth token
-<span class='line'>192</span>          * @param {String} hash Typically a string of key-value pairs delimited by
+<span class='line'>190</span>          &lt;code>access_token&lt;/code> and &lt;code>instance_url&lt;/code> cookies if they exist.  Use this method during
+<span class='line'>191</span>          User-Agent OAuth Authentication Flow to pass the OAuth token.
+<span class='line'>192</span>          * @param {String} hash A string of key-value pairs delimited by
 <span class='line'>193</span>          the ampersand character.
 <span class='line'>194</span>          * @example
 <span class='line'>195</span>          * Sfdc.canvas.oauth.childWindowUnloadNotification(self.location.hash);
@@ -214,7 +214,7 @@
 <span class='line'>207</span> </span><span class="WHIT">        </span><span class="COMM">/**
 <span class='line'>208</span>          * @name Sfdc.canvas.oauth#logout
 <span class='line'>209</span>          * @function
-<span class='line'>210</span>          * @description Removes the &lt;code>access_token&lt;/code> oauth token from this object.
+<span class='line'>210</span>          * @description Removes the &lt;code>access_token&lt;/code> OAuth token from this object.
 <span class='line'>211</span>          */</span><span class="WHIT">
 <span class='line'>212</span> </span><span class="WHIT">        </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">logout</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'>213</span> </span><span class="WHIT">            </span><span class="COMM">// Remove the oauth token and refresh the browser</span><span class="WHIT">
@@ -227,9 +227,9 @@
 <span class='line'>220</span> </span><span class="WHIT">        </span><span class="COMM">/**
 <span class='line'>221</span>          * @name Sfdc.canvas.oauth#loggedin
 <span class='line'>222</span>          * @function
-<span class='line'>223</span>          * @description Returns the login state
+<span class='line'>223</span>          * @description Returns the login state.
 <span class='line'>224</span>          * @returns {Boolean} &lt;code>true&lt;/code> if the &lt;code>access_token&lt;/code> is available in this JS object.
-<span class='line'>225</span>          * Note: &lt;code>access tokens&lt;/code> (i.e. OAuth tokens) should be stored server side for more durability.
+<span class='line'>225</span>          * Note: &lt;code>access tokens&lt;/code> (for example, OAuth tokens) should be stored server-side for more durability.
 <span class='line'>226</span>          * Never store OAuth tokens in cookies as this can lead to a security risk.
 <span class='line'>227</span>          */</span><span class="WHIT">
 <span class='line'>228</span> </span><span class="WHIT">        </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">loggedin</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
@@ -239,9 +239,9 @@
 <span class='line'>232</span> </span><span class="WHIT">        </span><span class="COMM">/**
 <span class='line'>233</span>          * @name Sfdc.canvas.oauth#loginUrl
 <span class='line'>234</span>          * @function
-<span class='line'>235</span>          * @description Returns the url for the OAuth authorization service
-<span class='line'>236</span>          * @returns {String} The url for the OAuth authorization service or default if there is
-<span class='line'>237</span>          *   not a value for loginUrl in the current url's query string.
+<span class='line'>235</span>          * @description Returns the URL for the OAuth authorization service.
+<span class='line'>236</span>          * @returns {String} The URL for the OAuth authorization service or default if there's
+<span class='line'>237</span>          *   no value for loginUrl in the current URL's query string
 <span class='line'>238</span>          */</span><span class="WHIT">
 <span class='line'>239</span> </span><span class="WHIT">        </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">loginUrl</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'>240</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">i</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">nvs</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">nv</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">q</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">self.location.search</span><span class="PUNC">;</span><span class="WHIT">

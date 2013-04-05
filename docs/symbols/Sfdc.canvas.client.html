@@ -220,7 +220,7 @@ ul.inheritsList
 				Sfdc.canvas.client
 
 				
-					<br /><i>Defined in: </i> <a href="../symbols/src/_home_khotchkiss_dev_app_main_core_platform-connect_htdocs_platform-connect_sdk_js_client.js.html">client.js</a>.
+					<br /><i>Defined in: </i> <a href="../symbols/src/_home_khotchkiss_dev_app_184_patch_core_platform-connect_jslibrary_canvas_client_client.js.html">client.js</a>.
 				
 			</p>
 
@@ -270,7 +270,7 @@ ul.inheritsList
 							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/Sfdc.canvas.client.html#ajax">ajax</a></b>(url, settings)
 								</div>
-								<div class="description">Perform a cross-domain, asynchronous HTTP request.</div>
+								<div class="description">Performs a cross-domain, asynchronous HTTP request.</div>
 							</td>
 						</tr>
 					
@@ -279,8 +279,8 @@ ul.inheritsList
 							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/Sfdc.canvas.client.html#autogrow">autogrow</a></b>(client, b, interval)
 								</div>
-								<div class="description">Starts or stops a timer which will automatically check the content size of your iframe and
-adjust the frame accordingly.</div>
+								<div class="description">Starts or stops a timer which checks the content size of the iFrame and
+adjusts the frame accordingly.</div>
 							</td>
 						</tr>
 					
@@ -289,7 +289,16 @@ adjust the frame accordingly.</div>
 							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/Sfdc.canvas.client.html#ctx">ctx</a></b>(clientscb, client)
 								</div>
-								<div class="description">Get the context for the current user and organization</div>
+								<div class="description">Returns the context for the current user and organization.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/Sfdc.canvas.client.html#publish">publish</a></b>(client, e)
+								</div>
+								<div class="description">Publishes a custom event.</div>
 							</td>
 						</tr>
 					
@@ -298,7 +307,7 @@ adjust the frame accordingly.</div>
 							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/Sfdc.canvas.client.html#resize">resize</a></b>(client, size)
 								</div>
-								<div class="description">Informs the parent window to resize your canvas iframe.</div>
+								<div class="description">Informs the parent window to resize the canvas iFrame.</div>
 							</td>
 						</tr>
 					
@@ -307,7 +316,7 @@ adjust the frame accordingly.</div>
 							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/Sfdc.canvas.client.html#size">size</a></b>()
 								</div>
-								<div class="description">Convenience method for getting the current size of the iframe.</div>
+								<div class="description">Returns the current size of the iFrame.</div>
 							</td>
 						</tr>
 					
@@ -316,7 +325,16 @@ adjust the frame accordingly.</div>
 							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/Sfdc.canvas.client.html#subscribe">subscribe</a></b>(client, s)
 								</div>
-								<div class="description">Subscribe to parent events.</div>
+								<div class="description">Subscribes to parent or custom events.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/Sfdc.canvas.client.html#unsubscribe">unsubscribe</a></b>(client, s)
+								</div>
+								<div class="description">Unsubscribes from parent or custom events.</div>
 							</td>
 						</tr>
 					
@@ -376,15 +394,15 @@ adjust the frame accordingly.</div>
 
 					</div>
 					<div class="description">
-						Perform a cross-domain, asynchronous HTTP request.
-                     <br>Note:  this should not be used for same domain requests.
+						Performs a cross-domain, asynchronous HTTP request.
+                     <br>Note: this method shouldn't be used for same domain requests.
 						
 						
 					</div>
 
 					
 					
-					<pre class="code">//Posting To a Chatter Feed:
+					<pre class="code">//Posting to a Chatter feed:
 var sr = JSON.parse('<%=signedRequestJson%>');
 var url = sr.context.links.chatterFeedsUrl+"/news/"
                                   +sr.context.user.userId+"/feed-items";
@@ -401,13 +419,13 @@ connect.client.ajax(url,
     }
   });</pre>
 					
-					<pre class="code">// Gets a List of Chatter Users:
+					<pre class="code">// Gets a list of Chatter users:
 // Paste the signed request string into a JavaScript object for easy access.
 var sr = JSON.parse('<%=signedRequestJson%>');
 // Reference the Chatter user's URL from Context.Links object.
 var chatterUsersUrl = sr.context.links.chatterUsersUrl;
 
-// Make an XHR call back to salesforce through the supplied browser proxy.
+// Make an XHR call back to Salesforce through the supplied browser proxy.
 connect.client.ajax(chatterUsersUrl,
   {client : sr.client,
   success : function(data){
@@ -435,14 +453,14 @@ connect.client.ajax(chatterUsersUrl,
 									<span class="light fixedFont">{Object}</span> <b>settings</b>
 									
 								</dt>
-								<dd>A set of key/value pairs to configure the request.
+								<dd>A set of key/value pairs to configure the request
                      <br>The success setting is required at minimum and should be a callback function</dd>
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>settings.client</b>
 									<i>Optional</i>
 								</dt>
-								<dd>required client context {oauthToken: "", targetOrigin : "", instanceId : ""}</dd>
+								<dd>The required client context {oauthToken: "", targetOrigin : "", instanceId : ""}</dd>
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>settings.contentType</b>
@@ -454,7 +472,7 @@ connect.client.ajax(chatterUsersUrl,
 									<span class="light fixedFont">{String}</span> <b>settings.data</b>
 									<i>Optional</i>
 								</dt>
-								<dd>request body</dd>
+								<dd>The request body</dd>
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>settings.headers</b>
@@ -466,19 +484,19 @@ connect.client.ajax(chatterUsersUrl,
 									<span class="light fixedFont">{String}</span> <b>settings.method</b>
 									<i>Optional, Default: "GET"</i>
 								</dt>
-								<dd>The type of Ajax Request to make</dd>
+								<dd>The type of AJAX request to make</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Function}</span> <b>settings.success</b>
 									<i>Optional</i>
 								</dt>
-								<dd>Callback for all responses from server (failure and success) . Signature: success(response); intersting fields: [response.data, response.responseHeaders, response.status, response.statusText}</dd>
+								<dd>Callback for all responses from the server (failure and success). Signature: success(response); interesting fields: [response.data, response.responseHeaders, response.status, response.statusText}</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Boolean}</span> <b>settings.async</b>
 									<i>Optional, Default: true</i>
 								</dt>
-								<dd>Asyncronous: true is only supported at this time.</dd>
+								<dd>Asynchronous: only <code>true</code> is supported.</dd>
 							
 							</dl>
 						
@@ -491,7 +509,7 @@ connect.client.ajax(chatterUsersUrl,
 								<dt>
 									 <b></b>
 								</dt>
-								<dd>error if the URL is missing or the settings object does not contain a success callback function.</dd>
+								<dd>An error if the URL is missing or the settings object doesn't contain a success callback function.</dd>
 							
 							</dl>
 						
@@ -509,12 +527,12 @@ connect.client.ajax(chatterUsersUrl,
 
 					</div>
 					<div class="description">
-						Starts or stops a timer which will automatically check the content size of your iframe and
-adjust the frame accordingly.
-Use this function when you know your content is changing size, but you're not sure when. There is delay as
-the resizing is done asynchronous. Therfore, if you know when your content changes size, you should call
-'resize()' explicitly and save Browser CPU cycles.
-Note: you should turn off scrolling before this call otherwise you can get a flicker.
+						Starts or stops a timer which checks the content size of the iFrame and
+adjusts the frame accordingly.
+Use this function when you know your content is changing size, but you're not sure when. There's a delay as
+the resizing is done asynchronously. Therfore, if you know when your content changes size, you should 
+explicitly call the resize() method and save browser CPU cycles.
+Note: you should turn off scrolling before this call, otherwise you might get a flicker.
 						
 						
 					</div>
@@ -528,7 +546,7 @@ Sfdc.canvas(function() {
     Sfdc.canvas.client.autogrow(sr.client);
 });
 
-// Turn on auto grow with polling interval of 100ms (milli seconds).
+// Turn on auto grow with a polling interval of 100ms (milliseconds).
 Sfdc.canvas(function() {
     sr = JSON.parse('<%=signedRequestJson%>');
     Sfdc.canvas.client.autogrow(sr.client, true, 100);
@@ -550,19 +568,19 @@ Sfdc.canvas(function() {
 									<span class="light fixedFont">{client}</span> <b>client</b>
 									
 								</dt>
-								<dd>object from signed request.</dd>
+								<dd>The object from the signed request</dd>
 							
 								<dt>
 									<span class="light fixedFont">{boolean}</span> <b>b</b>
 									
 								</dt>
-								<dd>on or off, true default</dd>
+								<dd>Whether it's turned on or off; defaults to <code>true</code></dd>
 							
 								<dt>
 									<span class="light fixedFont">{Integer}</span> <b>interval</b>
 									
 								</dt>
-								<dd>used to check content size, default timeout is 300ms.</dd>
+								<dd>The interval used to check content size; default timeout is 300ms.</dd>
 							
 							</dl>
 						
@@ -583,7 +601,7 @@ Sfdc.canvas(function() {
 
 					</div>
 					<div class="description">
-						Get the context for the current user and organization
+						Returns the context for the current user and organization.
 						
 						
 					</div>
@@ -615,13 +633,66 @@ ctxlink.onclick=function() {
 									<span class="light fixedFont">{Function}</span> <b>clientscb</b>
 									
 								</dt>
-								<dd>Callback function to run when the call to ctx is complete</dd>
+								<dd>The callback function to run when the call to ctx completes</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Object}</span> <b>client</b>
 									
 								</dt>
-								<dd>signedRequest.client.</dd>
+								<dd>The signedRequest.client.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="publish"> </a>
+					<div class="fixedFont">
+
+					
+					<b>publish</b>(client, e)
+
+					</div>
+					<div class="description">
+						Publishes a custom event. Events are published to all subscribing canvas applications
+on the same page, regardless of domain. Choose a unique namespace so the event doesn't collide with other
+application events. Events can have payloads of arbitrary JSON objects.
+						
+						
+					</div>
+
+					
+					
+					<pre class="code">// Publish the foo.bar event with the specified payload.
+Sfdc.canvas(function() {
+    sr = JSON.parse('<%=signedRequestJson%>');
+    Sfdc.canvas.client.publish(sr.client,
+        {name : "foo.bar", payload : {some : 'stuff'}});
+});</pre>
+					
+					
+
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{client}</span> <b>client</b>
+									
+								</dt>
+								<dd>The object from the signed request</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>e</b>
+									
+								</dt>
+								<dd>The event to publish</dd>
 							
 							</dl>
 						
@@ -642,10 +713,10 @@ ctxlink.onclick=function() {
 
 					</div>
 					<div class="description">
-						Informs the parent window to resize your canvas iframe. If parameters are not specified
-the parent window will attempt to automatically determine the height of the canvas app based off of
-content and set the iframe's width and height accordingly. If you would like to set the dimensions
-explicitly pass in an object with height and/or width properties.
+						Informs the parent window to resize the canvas iFrame. If no parameters are specified,
+the parent window attempts to determine the height of the canvas app based on the
+content and then sets the iFrame width and height accordingly. To explicitly set the dimensions,
+pass in an object with height and/or width properties.
 						
 						
 					</div>
@@ -680,13 +751,13 @@ Sfdc.canvas(function() {
 									<span class="light fixedFont">{Client}</span> <b>client</b>
 									
 								</dt>
-								<dd>object from signed request.</dd>
+								<dd>The object from the signed request</dd>
 							
 								<dt>
 									<span class="light fixedFont">{size}</span> <b>size</b>
 									
 								</dt>
-								<dd>optional height and width information</dd>
+								<dd>The optional height and width information</dd>
 							
 							</dl>
 						
@@ -707,26 +778,21 @@ Sfdc.canvas(function() {
 
 					</div>
 					<div class="description">
-						Convenience method for getting the current size of the iframe.
+						Returns the current size of the iFrame.
 						
 						
 					</div>
 
 					
 					
-					<pre class="code">
+					<pre class="code">//get the size of the iFrame and print out each component.
 var sizes = Sfdc.canvas.client.size();
 console.log("contentHeight; " + sizes.heights.contentHeight);
 console.log("pageHeight; " + sizes.heights.pageHeight);
 console.log("scrollTop; " + sizes.heights.scrollTop);
 console.log("contentWidth; " + sizes.widths.contentWidth);
 console.log("pageWidth; " + sizes.widths.pageWidth);
-console.log("scrollLeft; " + sizes.widths.scrollLeft);
-
-Sfdc.canvas(function() {
-    sr = JSON.parse('<%=signedRequestJson%>');
-    Sfdc.canvas.client.autogrow(sr.client);
-});</pre>
+console.log("scrollLeft; " + sizes.widths.scrollLeft);</pre>
 					
 					
 
@@ -738,12 +804,13 @@ Sfdc.canvas(function() {
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd><span class="light fixedFont">{Object}</span> heights.contentHeight - the height of the virtual iframe, all content not just visible.
-heights.pageHeight - the height of the visible iframe in the browser.
-heights.scrollTop - the position of the scroll bar measured from the top.
-widths.contentWidth - the width of the virtual iframe, all content not just visible.
-widths.pageWidth - the width of the visible iframe in the browser.
-widths.scrollLeft - the position of the scroll bar measured from the left.</dd>
+								<dd><span class="light fixedFont">{Object}</span> <br>
+<code>heights.contentHeight</code>: the height of the virtual iFrame, all content, not just visible content.<br>
+<code>heights.pageHeight</code>: the height of the visible iFrame in the browser.<br>
+<code>heights.scrollTop</code>: the position of the scroll bar measured from the top.<br>
+<code>widths.contentWidth</code>: the width of the virtual iFrame, all content, not just visible content.<br>
+<code>widths.pageWidth</code>: the width of the visible iFrame in the browser.<br>
+<code>widths.scrollLeft</code>: the position of the scroll bar measured from the left.</dd>
 							
 							</dl>
 						
@@ -760,25 +827,49 @@ widths.scrollLeft - the position of the scroll bar measured from the left.</dd>
 
 					</div>
 					<div class="description">
-						Subscribe to parent events. example "scroll".
+						Subscribes to parent or custom events. Events
+with the namespaces 'canvas', 'sfdc', 'force', 'salesforce', and 'chatter' are reserved by Salesforce.
+Developers can choose their own namespace and event names.
+Event names must be in the form <code>namespace.eventname</code>.
 						
 						
 					</div>
 
 					
 					
-					<pre class="code">
+					<pre class="code">// Subscribe to the parent window onscroll event.
 Sfdc.canvas(function() {
     sr = JSON.parse('<%=signedRequestJson%>');
     // Capture the onScrolling event of the parent window.
-    Sfdc.canvas.client.subscribe(sr.client, {onScroll : function () {
-         console.log("Parent's contentHeight; " + event.heights.contentHeight);
-         console.log("Parent's pageHeight; " + event.heights.pageHeight);
-         console.log("Parent's scrollTop; " + event.heights.scrollTop);
-         console.log("Parent's contentWidth; " + event.widths.contentWidth);
-         console.log(Parent's "pageWidth; " + event.widths.pageWidth);
-         console.log("Parent's scrollLeft; " + event.widths.scrollLeft);
-     }});
+    Sfdc.canvas.client.subscribe(sr.client,
+         {name : 'canvas.scroll', onData : function (event) {
+             console.log("Parent's contentHeight; " + event.heights.contentHeight);
+             console.log("Parent's pageHeight; " + event.heights.pageHeight);
+             console.log("Parent's scrollTop; " + event.heights.scrollTop);
+             console.log("Parent's contentWidth; " + event.widths.contentWidth);
+             console.log("Parent's pageWidth; " + event.widths.pageWidth);
+             console.log("Parent's scrollLeft; " + event.widths.scrollLeft);
+         }}
+    );
+});</pre>
+					
+					<pre class="code">// Subscribe to a custom event.
+Sfdc.canvas(function() {
+    sr = JSON.parse('<%=signedRequestJson%>');
+    Sfdc.canvas.client.subscribe(sr.client,
+        {name : 'mynamespace.someevent', onData : function (event) {
+            console.log("Got custom event ",  event);
+        }}
+    );
+});</pre>
+					
+					<pre class="code">// Subscribe to multiple events
+Sfdc.canvas(function() {
+    sr = JSON.parse('<%=signedRequestJson%>');
+    Sfdc.canvas.client.subscribe(sr.client, [
+        {name : 'mynamespace.someevent1', onData : handler1},
+        {name : 'mynamespace.someevent2', onData : handler2},
+    ]);
 });</pre>
 					
 					
@@ -791,13 +882,75 @@ Sfdc.canvas(function() {
 									<span class="light fixedFont">{client}</span> <b>client</b>
 									
 								</dt>
-								<dd>object from signed request.</dd>
+								<dd>The object from the signed request</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Object}</span> <b>s</b>
 									
 								</dt>
-								<dd>subscriber object with callback functions.</dd>
+								<dd>The subscriber object or array of objects with name and callback functions</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="unsubscribe"> </a>
+					<div class="fixedFont">
+
+					
+					<b>unsubscribe</b>(client, s)
+
+					</div>
+					<div class="description">
+						Unsubscribes from parent or custom events.
+						
+						
+					</div>
+
+					
+					
+					<pre class="code">//Unsubscribe from the canvas.scroll method.
+Sfdc.canvas(function() {
+    sr = JSON.parse('<%=signedRequestJson%>');
+    Sfdc.canvas.client.unsubscribe(sr.client, "canvas.scroll");
+});</pre>
+					
+					<pre class="code">//Unsubscribe from the canvas.scroll method by specifying the object name.
+Sfdc.canvas(function() {
+    sr = JSON.parse('<%=signedRequestJson%>');
+    Sfdc.canvas.client.unsubscribe(sr.client, {name : "canvas.scroll"});
+});</pre>
+					
+					<pre class="code">//Unsubscribe from multiple events.
+Sfdc.canvas(function() {
+    sr = JSON.parse('<%=signedRequestJson%>');
+    Sfdc.canvas.client.unsubscribe(sr.client, ['canvas.scroll', 'foo.bar']);
+});</pre>
+					
+					
+
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{client}</span> <b>client</b>
+									
+								</dt>
+								<dd>The object from the signed request</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>s</b>
+									
+								</dt>
+								<dd>The events to unsubscribe from</dd>
 							
 							</dl>
 						
@@ -822,7 +975,7 @@ Sfdc.canvas(function() {
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.0 on Fri Feb 22 2013 18:22:13 GMT-0000 (GMT)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.0 on Fri Apr 05 2013 16:01:57 GMT-0000 (GMT)
 		</div>
 	</body>
 </html>
