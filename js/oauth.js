@@ -1,28 +1,3 @@
-/**
-* Copyright (c) 2011, salesforce.com, inc.
-* All rights reserved.
-*
-* Redistribution and use in source and binary forms, with or without modification, are permitted provided
-* that the following conditions are met:
-*
-* Redistributions of source code must retain the above copyright notice, this list of conditions and the
-* following disclaimer.
-*
-* Redistributions in binary form must reproduce the above copyright notice, this list of conditions and
-* the following disclaimer in the documentation and/or other materials provided with the distribution.
-*
-* Neither the name of salesforce.com, inc. nor the names of its contributors may be used to endorse or
-* promote products derived from this software without specific prior written permission.
-*
-* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED
-* WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
-* PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
-* ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
-* TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-* HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-* NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-* POSSIBILITY OF SUCH DAMAGE.
-*/
 
 /**
  *@namespace Sfdc.canvas.oauth
@@ -72,8 +47,8 @@
         /**
          * @name Sfdc.canvas.oauth#login
          * @function
-         * @description Opens the OAuth popup window to retrieve an OAuth token
-         * @param {Object} ctx  Context object that contains the url, the response type, the client id and callback url
+         * @description Opens the OAuth popup window to retrieve an OAuth token.
+         * @param {Object} ctx  The context object that contains the URL, the response type, the client ID, and the callback URL
          * @docneedsimprovement
          * @example
          * function clickHandler(e)
@@ -110,15 +85,15 @@
         /**
          * @name Sfdc.canvas.oauth#token
          * @function
-         * @description Sets, gets or removes the <code>access_token</code> from this JS object <br>
-         <p>This function does one of three things <br>
-         If the 't' parameter is not passed in, the current value for the <code>access_token</code> value is returned. <br>
-         If the the 't' parameter is null, the <code>access_token</code> value is removed. <br>
-         Note: for longer term storage of the OAuth token store it server side in the session, access tokens
-         should never be stored in cookies.
-         Otherwise the <code>access_token</code>  value is set to the 't' parameter and then returned.
-         * @param {String} [t] The oauth token to set as the <code>access_token</code> value
-         * @returns {String} The resulting <code>access_token</code> value if set, otherwise null
+         * @description Sets, gets, or removes the <code>access_token</code> from this JavaScript object. <br>
+         <p>This function does one of three things: <br>
+         	1) If the 't' parameter isn't passed in, the current value for the <code>access_token</code> value is returned. <br>
+         	2) If the the 't' parameter is null, the <code>access_token</code> value is removed. <br>
+         	3) Otherwise the <code>access_token</code>  value is set to the 't' parameter and then returned.<br><br>
+         	Note: for longer-term storage of the OAuth token, store it server-side in the session.  Access tokens
+             should never be stored in cookies.
+         * @param {String} [t] The OAuth token to set as the <code>access_token</code> value
+         * @returns {String} The resulting <code>access_token</code> value if set; otherwise null
          */
         function token(t) {
             if (arguments.length === 0) {
@@ -134,13 +109,13 @@
         /**
          * @name Sfdc.canvas.oauth#instance
          * @function
-         * @description Sets, gets or removes the <code>instance_url</code> cookie <br>
-         <p> This function does one of three things <br>
-         If the 'i' parameter is not passed in, the current value for the <code>instance_url</code> cookie is returned. <br>
-         If the 'i' parameter is null, the <code>instance_url</code> cookie is removed. <br>
-         Otherwise the <code>instance_url</code> cookie value is set to the 'i' parameter and then returned.
+         * @description Sets, gets, or removes the <code>instance_url</code> cookie. <br>
+         <p> This function does one of three things: <br>
+         1) If the 'i' parameter is not passed in, the current value for the <code>instance_url</code> cookie is returned. <br>
+         2) If the 'i' parameter is null, the <code>instance_url</code> cookie is removed. <br>
+         3) Otherwise, the <code>instance_url</code> cookie value is set to the 'i' parameter and then returned.
          * @param {String} [i] The value to set as the <code>instance_url</code> cookie
-         * @returns {String} The resulting <code>instance_url</code> cookie value if set, otherwise null
+         * @returns {String} The resulting <code>instance_url</code> cookie value if set; otherwise null
          */
         function instanceUrl(i) {
             if (arguments.length === 0) {
@@ -212,9 +187,9 @@
          * @name Sfdc.canvas.oauth#childWindowUnloadNotification
          * @function
          * @description Parses the hash value that is passed in and sets the
-         <code>access_token</code> and <code>instance_url</code> cookies if they exist.  Use during
-         User-Agent OAuth Authentication Flow to pass the OAuth token
-         * @param {String} hash Typically a string of key-value pairs delimited by
+         <code>access_token</code> and <code>instance_url</code> cookies if they exist.  Use this method during
+         User-Agent OAuth Authentication Flow to pass the OAuth token.
+         * @param {String} hash A string of key-value pairs delimited by
          the ampersand character.
          * @example
          * Sfdc.canvas.oauth.childWindowUnloadNotification(self.location.hash);
@@ -232,7 +207,7 @@
         /**
          * @name Sfdc.canvas.oauth#logout
          * @function
-         * @description Removes the <code>access_token</code> oauth token from this object.
+         * @description Removes the <code>access_token</code> OAuth token from this object.
          */
         function logout() {
             // Remove the oauth token and refresh the browser
@@ -245,9 +220,9 @@
         /**
          * @name Sfdc.canvas.oauth#loggedin
          * @function
-         * @description Returns the login state
+         * @description Returns the login state.
          * @returns {Boolean} <code>true</code> if the <code>access_token</code> is available in this JS object.
-         * Note: <code>access tokens</code> (i.e. OAuth tokens) should be stored server side for more durability.
+         * Note: <code>access tokens</code> (for example, OAuth tokens) should be stored server-side for more durability.
          * Never store OAuth tokens in cookies as this can lead to a security risk.
          */
         function loggedin() {
@@ -257,9 +232,9 @@
         /**
          * @name Sfdc.canvas.oauth#loginUrl
          * @function
-         * @description Returns the url for the OAuth authorization service
-         * @returns {String} The url for the OAuth authorization service or default if there is
-         *   not a value for loginUrl in the current url's query string.
+         * @description Returns the URL for the OAuth authorization service.
+         * @returns {String} The URL for the OAuth authorization service or default if there's
+         *   no value for loginUrl in the current URL's query string
          */
         function loginUrl() {
             var i, nvs, nv, q = self.location.search;

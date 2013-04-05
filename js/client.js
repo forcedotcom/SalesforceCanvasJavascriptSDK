@@ -1,29 +1,4 @@
 /**
-* Copyright (c) 2011, salesforce.com, inc.
-* All rights reserved.
-*
-* Redistribution and use in source and binary forms, with or without modification, are permitted provided
-* that the following conditions are met:
-*
-* Redistributions of source code must retain the above copyright notice, this list of conditions and the
-* following disclaimer.
-*
-* Redistributions in binary form must reproduce the above copyright notice, this list of conditions and
-* the following disclaimer in the documentation and/or other materials provided with the distribution.
-*
-* Neither the name of salesforce.com, inc. nor the names of its contributors may be used to endorse or
-* promote products derived from this software without specific prior written permission.
-*
-* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED
-* WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
-* PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
-* ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
-* TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-* HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-* NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-* POSSIBILITY OF SUCH DAMAGE.
-*/
-/**
  *@namespace Sfdc.canvas.client
  *@name Sfdc.canvas.client
  */
@@ -51,7 +26,7 @@
                 if (purl) {return purl;}
             }
             // This relies on the parent passing it in. This may not be there as the client can do a redirect.
-            h = document.location.hash;
+            h = $$.document().location.hash;
             if (h) {
                 h = decodeURIComponent(h.replace(/^#/, ''));
                 purl = startsWithHttp(h, purl);
@@ -91,15 +66,16 @@
                 c  = message && message.config && message.config.client;
                 to = getTargetOrigin($$.isNil(c) ? null : c.targetOrigin);
                 if ($$.isNil(to)) {
-                    throw "ERROR: targetOrigin was not supplied and was not found on the hash tag, this can result from a redirect or link to another page. " +
-                        "Try setting the targetOrgin (example: targetOrigin : sr.context.environment.targetOrigin) " +
-                        "when making an ajax request.";
+                    throw "ERROR: targetOrigin was not supplied and was not found on the hash tag, this can result from a redirect or link to another page.";
                 }
                 $$.xd.post(wrapped, to, parent);
             }
 
             function validateClient(client, cb) {
                 var msg;
+
+                client = client || $$.oauth && $$.oauth.client();
+
                 if ($$.isNil(client) || $$.isNil(client.oauthToken)) {
                     msg = {status : 401, statusText : "Unauthorized" , parentVersion : pversion, payload : "client or client.oauthToken not supplied"};
                 }
@@ -122,6 +98,18 @@
 
             var event = (function() {
                 var subscriptions = {};
+
+                function validName(name, res) {
+                    var msg, r = $$.validEventName(name, res);
+                    if (r !== 0) {
+                        msg = {1 : "Event names can only contain one namespace",
+                               2 : "Namespace has already been reserved",
+                               3 : "Event name contains invalid characters"
+                        };
+                        throw msg[r];
+                    }
+                }
+
                 return  {
                     callback : function (data) {
                         var event = data.payload,
@@ -133,36 +121,64 @@
                         }
                     },
                     /**
-                     * @description Subscribe to parent events. example "scroll".
+                     * @description Subscribes to parent or custom events. Events
+                     * with the namespaces 'canvas', 'sfdc', 'force', 'salesforce', and 'chatter' are reserved by Salesforce.
+                     * Developers can choose their own namespace and event names.
+                     * Event names must be in the form <code>namespace.eventname</code>.
                      * @public
                      * @name Sfdc.canvas.client#subscribe
                      * @function
-                     * @param {client} client object from signed request.
-                     * @param {Object} s subscriber object with callback functions.
+                     * @param {client} client The object from the signed request
+                     * @param {Object} s The subscriber object or array of objects with name and callback functions
                      * @example
-                     *
+                     * // Subscribe to the parent window onscroll event.
                      * Sfdc.canvas(function() {
                      *     sr = JSON.parse('<%=signedRequestJson%>');
                      *     // Capture the onScrolling event of the parent window.
-                     *     Sfdc.canvas.client.subscribe(sr.client, {onScroll : function () {
-                     *          console.log("Parent's contentHeight; " + event.heights.contentHeight);
-                     *          console.log("Parent's pageHeight; " + event.heights.pageHeight);
-                     *          console.log("Parent's scrollTop; " + event.heights.scrollTop);
-                     *          console.log("Parent's contentWidth; " + event.widths.contentWidth);
-                     *          console.log(Parent's "pageWidth; " + event.widths.pageWidth);
-                     *          console.log("Parent's scrollLeft; " + event.widths.scrollLeft);
-                     *      }});
+                     *     Sfdc.canvas.client.subscribe(sr.client,
+                     *          {name : 'canvas.scroll', onData : function (event) {
+                     *              console.log("Parent's contentHeight; " + event.heights.contentHeight);
+                     *              console.log("Parent's pageHeight; " + event.heights.pageHeight);
+                     *              console.log("Parent's scrollTop; " + event.heights.scrollTop);
+                     *              console.log("Parent's contentWidth; " + event.widths.contentWidth);
+                     *              console.log("Parent's pageWidth; " + event.widths.pageWidth);
+                     *              console.log("Parent's scrollLeft; " + event.widths.scrollLeft);
+                     *          }}
+                     *     );
                      * });
+                     *
+                     * @example
+                     * // Subscribe to a custom event.
+                     * Sfdc.canvas(function() {
+                     *     sr = JSON.parse('<%=signedRequestJson%>');
+                     *     Sfdc.canvas.client.subscribe(sr.client,
+                     *         {name : 'mynamespace.someevent', onData : function (event) {
+                     *             console.log("Got custom event ",  event);
+                     *         }}
+                     *     );
+                     * });
+                     *
+                     * @example
+                     * // Subscribe to multiple events
+                     * Sfdc.canvas(function() {
+                     *     sr = JSON.parse('<%=signedRequestJson%>');
+                     *     Sfdc.canvas.client.subscribe(sr.client, [
+                     *         {name : 'mynamespace.someevent1', onData : handler1},
+                     *         {name : 'mynamespace.someevent2', onData : handler2},
+                     *     ]);
+                     * });
+                     *
                      */
                     subscribe : function(client, s) {
                         var subs = {};
 
-                        if ($$.isNil(s) || !validateClient(client || $$.oauth.client())) {
-                            return;
+                        if ($$.isNil(s) || (!validateClient(client))) {
+                            throw "precondition fail";
                         }
 
                         $$.each($$.isArray(s) ? s : [s], function (v) {
                             if (!$$.isNil(v.name)) {
+                                validName(v.name, "canvas");
                                 subscriptions[v.name] = v;
                                 subs[v.name] = {
                                     params : v.params
@@ -172,13 +188,43 @@
                                 throw "subscription does not have a 'name'";
                             }
                         });
-                        postit(null, {type : "subscribe", config : {client : client}, subscriptions : subs});
+                        if (!client.isVF) {
+                            postit(null, {type : "subscribe", config : {client : client}, subscriptions : subs});
+                        }
                     },
+                    /**
+                     * @description Unsubscribes from parent or custom events.
+                     * @public
+                     * @name Sfdc.canvas.client#unsubscribe
+                     * @function
+                     * @param {client} client The object from the signed request
+                     * @param {Object} s The events to unsubscribe from
+                     * @example
+                     * //Unsubscribe from the canvas.scroll method.
+                     * Sfdc.canvas(function() {
+                     *     sr = JSON.parse('<%=signedRequestJson%>');
+                     *     Sfdc.canvas.client.unsubscribe(sr.client, "canvas.scroll");
+                     *});
+                     *
+                     * @example
+                     * //Unsubscribe from the canvas.scroll method by specifying the object name.
+                     * Sfdc.canvas(function() {
+                     *     sr = JSON.parse('<%=signedRequestJson%>');
+                     *     Sfdc.canvas.client.unsubscribe(sr.client, {name : "canvas.scroll"});
+                     *});
+                     *
+                     * @example
+                     * //Unsubscribe from multiple events.
+                     * Sfdc.canvas(function() {
+                     *     sr = JSON.parse('<%=signedRequestJson%>');
+                     *     Sfdc.canvas.client.unsubscribe(sr.client, ['canvas.scroll', 'foo.bar']);
+                     *});
+                     */
                     unsubscribe : function(client, s) {
                         // client can pass in the handler object or just the name
                         var subs = {};
 
-                        if ($$.isNil(s) || !validateClient(client || $$.oauth.client())) {
+                        if ($$.isNil(s) || !validateClient(client)) {
                             throw "PRECONDITION FAIL: need fo supply client and event name";
                         }
 
@@ -188,17 +234,38 @@
                         }
                         else {
                             $$.each($$.isArray(s) ? s : [s], function (v) {
-                                subs[v.name] = {
+                                var name = v.name ? v.name : v;
+                                validName(name, "canvas");
+                                subs[name] = {
                                     params : v.params
                                 };
-                                delete subscriptions[v.name];
+                                delete subscriptions[name];
                             });
                         }
-                        postit(null, {type : "unsubscribe", config : {client : client}, subscriptions : subs});
+                        if (!client.isVF) {
+                            postit(null, {type : "unsubscribe", config : {client : client}, subscriptions : subs});
+                        }
                     },
+                    /**
+                     * @description Publishes a custom event. Events are published to all subscribing canvas applications
+                     * on the same page, regardless of domain. Choose a unique namespace so the event doesn't collide with other
+                     * application events. Events can have payloads of arbitrary JSON objects.
+                     * @public
+                     * @name Sfdc.canvas.client#publish
+                     * @function
+                     * @param {client} client The object from the signed request
+                     * @param {Object} e The event to publish
+                     * @example
+                     * // Publish the foo.bar event with the specified payload.
+                     * Sfdc.canvas(function() {
+                     *     sr = JSON.parse('<%=signedRequestJson%>');
+                     *     Sfdc.canvas.client.publish(sr.client,
+                     *         {name : "foo.bar", payload : {some : 'stuff'}});
+                     *});
+                     */
                     publish : function(client, e) {
                         if (!$$.isNil(e) && !$$.isNil(e.name)) {
-                            client = client || $$.oauth.client();
+                            validName(e.name);
                             if (validateClient(client)) {
                                 postit(null, {type : "publish", config : {client : client}, event : e});
                             }
@@ -216,7 +283,7 @@
                             data.payload[0].errorCode &&
                             data.payload[0].errorCode === "INVALID_SESSION_ID") {
                             // Session has expired logout.
-                            $$.oauth.logout();
+                            if ($$.oauth) {$$.oauth.logout();}
                         }
                         // Find appropriate client callback an invoke it.
                         if ($$.isFunction(cbs[data.seq])) {
@@ -238,23 +305,23 @@
             var services = (function() {
                 return  {
                     /**
-                     * @description Perform a cross-domain, asynchronous HTTP request.
-                     <br>Note:  this should not be used for same domain requests.
+                     * @description Performs a cross-domain, asynchronous HTTP request.
+                     <br>Note: this method shouldn't be used for same domain requests.
                      * @param {String} url The URL to which the request is sent
-                     * @param {Object} settings A set of key/value pairs to configure the request.
+                     * @param {Object} settings A set of key/value pairs to configure the request
                      <br>The success setting is required at minimum and should be a callback function
-                     * @config {String} [client] required client context {oauthToken: "", targetOrigin : "", instanceId : ""}
+                     * @config {String} [client] The required client context {oauthToken: "", targetOrigin : "", instanceId : ""}
                      * @config {String} [contentType] "application/json"
-                     * @config {String} [data] request body
+                     * @config {String} [data] The request body
                      * @config {String} [headers] request headers
-                     * @config {String} [method="GET"] The type of Ajax Request to make
-                     * @config {Function} [success] Callback for all responses from server (failure and success) . Signature: success(response); intersting fields: [response.data, response.responseHeaders, response.status, response.statusText}
-                     * @config {Boolean} [async=true] Asyncronous: true is only supported at this time.
+                     * @config {String} [method="GET"] The type of AJAX request to make
+                     * @config {Function} [success] Callback for all responses from the server (failure and success). Signature: success(response); interesting fields: [response.data, response.responseHeaders, response.status, response.statusText}
+                     * @config {Boolean} [async=true] Asynchronous: only <code>true</code> is supported.
                      * @name Sfdc.canvas.client#ajax
                      * @function
-                     * @throws error if the URL is missing or the settings object does not contain a success callback function.
+                     * @throws An error if the URL is missing or the settings object doesn't contain a success callback function.
                      * @example
-                     * //Posting To a Chatter Feed:
+                     * //Posting to a Chatter feed:
                      * var sr = JSON.parse('<%=signedRequestJson%>');
                      * var url = sr.context.links.chatterFeedsUrl+"/news/"
                      *                                   +sr.context.user.userId+"/feed-items";
@@ -271,13 +338,13 @@
                      *     }
                      *   });
                      * @example
-                     * // Gets a List of Chatter Users:
+                     * // Gets a list of Chatter users:
                      * // Paste the signed request string into a JavaScript object for easy access.
                      * var sr = JSON.parse('<%=signedRequestJson%>');
                      * // Reference the Chatter user's URL from Context.Links object.
                      * var chatterUsersUrl = sr.context.links.chatterUsersUrl;
                      *
-                     * // Make an XHR call back to salesforce through the supplied browser proxy.
+                     * // Make an XHR call back to Salesforce through the supplied browser proxy.
                      * connect.client.ajax(chatterUsersUrl,
                      *   {client : sr.client,
                      *   success : function(data){
@@ -328,12 +395,12 @@
                         postit(ccb, {type : "ajax", url : url, config : config});
                     },
                     /**
-                     * @description Get the context for the current user and organization
+                     * @description Returns the context for the current user and organization.
                      * @public
                      * @name Sfdc.canvas.client#ctx
                      * @function
-                     * @param {Function} clientscb Callback function to run when the call to ctx is complete
-                     * @param {Object} client signedRequest.client.
+                     * @param {Function} clientscb The callback function to run when the call to ctx completes
+                     * @param {Object} client The signedRequest.client.
                      * @example
                      * // Gets context in the canvas app.
                      *
@@ -351,7 +418,6 @@
                      * }
                      */
                     ctx : function (clientscb, client) {
-                        client = client || $$.oauth.client();
                         if (validateClient(client, clientscb)) {
                             postit(clientscb, {type : "ctx", accessToken : client.oauthToken, config : {client : client}});
                         }
@@ -363,7 +429,7 @@
                      * @returns {Object} the oauth token.
                      */
                     token : function(t) {
-                        return $$.oauth.token(t);
+                        return $$.oauth && $$.oauth.token(t);
                     },
                     /**
                      * @description Returns the current version of the client.
@@ -381,16 +447,16 @@
                      * @public
                      * @name Sfdc.canvas.client#size
                      * @function
-                     * @description Convenience method for getting the current size of the iframe.
-                     * @return {Object}
-                     * heights.contentHeight - the height of the virtual iframe, all content not just visible.
-                     * heights.pageHeight - the height of the visible iframe in the browser.
-                     * heights.scrollTop - the position of the scroll bar measured from the top.
-                     * widths.contentWidth - the width of the virtual iframe, all content not just visible.
-                     * widths.pageWidth - the width of the visible iframe in the browser.
-                     * widths.scrollLeft - the position of the scroll bar measured from the left.
+                     * @description Returns the current size of the iFrame.
+                     * @return {Object}<br>
+                     * <code>heights.contentHeight</code>: the height of the virtual iFrame, all content, not just visible content.<br>
+                     * <code>heights.pageHeight</code>: the height of the visible iFrame in the browser.<br>
+                     * <code>heights.scrollTop</code>: the position of the scroll bar measured from the top.<br>
+                     * <code>widths.contentWidth</code>: the width of the virtual iFrame, all content, not just visible content.<br>
+                     * <code>widths.pageWidth</code>: the width of the visible iFrame in the browser.<br>
+                     * <code>widths.scrollLeft</code>: the position of the scroll bar measured from the left.
                      * @example
-                     *
+                     * //get the size of the iFrame and print out each component.
                      * var sizes = Sfdc.canvas.client.size();
                      * console.log("contentHeight; " + sizes.heights.contentHeight);
                      * console.log("pageHeight; " + sizes.heights.pageHeight);
@@ -398,19 +464,15 @@
                      * console.log("contentWidth; " + sizes.widths.contentWidth);
                      * console.log("pageWidth; " + sizes.widths.pageWidth);
                      * console.log("scrollLeft; " + sizes.widths.scrollLeft);
-                     *
-                     * Sfdc.canvas(function() {
-                     *     sr = JSON.parse('<%=signedRequestJson%>');
-                     *     Sfdc.canvas.client.autogrow(sr.client);
-                     * });
                      */
                     size : function() {
-                        var contentHeight = document.documentElement.scrollHeight,
-                            pageHeight = document.documentElement.clientHeight,
-                            scrollTop = (document.documentElement && document.documentElement.scrollTop) || document.body.scrollTop,
-                            contentWidth = document.documentElement.scrollWidth,
-                            pageWidth = document.documentElement.clientWidth,
-                            scrollLeft = (document.documentElement && document.documentElement.scrollLeft) || document.body.scrollLeft;
+                        var docElement = $$.document().documentElement;
+                        var contentHeight = docElement.scrollHeight,
+                            pageHeight = docElement.clientHeight,
+                            scrollTop = (docElement && docElement.scrollTop) || $$.document().body.scrollTop,
+                            contentWidth = docElement.scrollWidth,
+                            pageWidth = docElement.clientWidth,
+                            scrollLeft = (docElement && docElement.scrollLeft) || $$.document().body.scrollLeft;
 
                         return {heights : {contentHeight : contentHeight, pageHeight : pageHeight, scrollTop : scrollTop},
                             widths : {contentWidth : contentWidth, pageWidth : pageWidth, scrollLeft : scrollLeft}};
@@ -419,12 +481,12 @@
                      * @public
                      * @name Sfdc.canvas.client#resize
                      * @function
-                     * @description Informs the parent window to resize your canvas iframe. If parameters are not specified
-                     * the parent window will attempt to automatically determine the height of the canvas app based off of
-                     * content and set the iframe's width and height accordingly. If you would like to set the dimensions
-                     * explicitly pass in an object with height and/or width properties.
-                     * @param {Client} client object from signed request.
-                     * @param {size} size optional height and width information
+                     * @description Informs the parent window to resize the canvas iFrame. If no parameters are specified,
+                     * the parent window attempts to determine the height of the canvas app based on the
+                     * content and then sets the iFrame width and height accordingly. To explicitly set the dimensions,
+                     * pass in an object with height and/or width properties.
+                     * @param {Client} client The object from the signed request
+                     * @param {size} size The optional height and width information
                      * @example
                      * //Automatically determine the size
                      * Sfdc.canvas(function() {
@@ -448,17 +510,18 @@
                      *
                      */
                     resize : function(client, size) {
-                        var sh, ch, sw, cw, s = {height : "", width : ""};
+                        var sh, ch, sw, cw, s = {height : "", width : ""},
+                            docElement = $$.document().documentElement;
 
                         // If the size was not supplied, adjust window
                         if ($$.isNil(size)) {
-                            sh = document.documentElement.scrollHeight;
-                            ch = document.documentElement.clientHeight;
+                            sh = docElement.scrollHeight;
+                            ch = docElement.clientHeight;
                             if (ch !== sh) {
                                 s.height = sh + "px";
                             }
-                            sw = document.documentElement.scrollWidth;
-                            cw = document.documentElement.clientWidth;
+                            sw = docElement.scrollWidth;
+                            cw = docElement.clientWidth;
                             if (sw !== cw) {
                                 s.width = sw + "px";
                             }
@@ -479,15 +542,15 @@
                      * @public
                      * @name Sfdc.canvas.client#autogrow
                      * @function
-                     * @description Starts or stops a timer which will automatically check the content size of your iframe and
-                     * adjust the frame accordingly.
-                     * Use this function when you know your content is changing size, but you're not sure when. There is delay as
-                     * the resizing is done asynchronous. Therfore, if you know when your content changes size, you should call
-                     * 'resize()' explicitly and save Browser CPU cycles.
-                     * Note: you should turn off scrolling before this call otherwise you can get a flicker.
-                     * @param {client} client object from signed request.
-                     * @param {boolean} b on or off, true default
-                     * @param {Integer} interval used to check content size, default timeout is 300ms.
+                     * @description Starts or stops a timer which checks the content size of the iFrame and
+                     * adjusts the frame accordingly.
+                     * Use this function when you know your content is changing size, but you're not sure when. There's a delay as
+                     * the resizing is done asynchronously. Therfore, if you know when your content changes size, you should 
+                     * explicitly call the resize() method and save browser CPU cycles.
+                     * Note: you should turn off scrolling before this call, otherwise you might get a flicker.
+                     * @param {client} client The object from the signed request
+                     * @param {boolean} b Whether it's turned on or off; defaults to <code>true</code>
+                     * @param {Integer} interval The interval used to check content size; default timeout is 300ms.
                      * @example
                      *
                      * // Turn on auto grow with default settings.
@@ -496,7 +559,7 @@
                      *     Sfdc.canvas.client.autogrow(sr.client);
                      * });
                      *
-                     * // Turn on auto grow with polling interval of 100ms (milli seconds).
+                     * // Turn on auto grow with a polling interval of 100ms (milliseconds).
                      * Sfdc.canvas(function() {
                      *     sr = JSON.parse('<%=signedRequestJson%>');
                      *     Sfdc.canvas.client.autogrow(sr.client, true, 100);
