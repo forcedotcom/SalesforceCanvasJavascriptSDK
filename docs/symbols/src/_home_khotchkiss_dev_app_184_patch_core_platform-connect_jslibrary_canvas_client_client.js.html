@@ -333,7 +333,7 @@
 <span class='line'>326</span>                      * var url = sr.context.links.chatterFeedsUrl+"/news/"
 <span class='line'>327</span>                      *                                   +sr.context.user.userId+"/feed-items";
 <span class='line'>328</span>                      * var body = {body : {messageSegments : [{type: "Text", text: "Some Chatter Post"}]}};
-<span class='line'>329</span>                      * connect.client.ajax(url,
+<span class='line'>329</span>                      * Sfdc.canvas.client.ajax(url,
 <span class='line'>330</span>                      *   {client : sr.client,
 <span class='line'>331</span>                      *     method: 'POST',
 <span class='line'>332</span>                      *     contentType: "application/json",
@@ -352,7 +352,7 @@
 <span class='line'>345</span>                      * var chatterUsersUrl = sr.context.links.chatterUsersUrl;
 <span class='line'>346</span>                      *
 <span class='line'>347</span>                      * // Make an XHR call back to Salesforce through the supplied browser proxy.
-<span class='line'>348</span>                      * connect.client.ajax(chatterUsersUrl,
+<span class='line'>348</span>                      * Sfdc.canvas.client.ajax(chatterUsersUrl,
 <span class='line'>349</span>                      *   {client : sr.client,
 <span class='line'>350</span>                      *   success : function(data){
 <span class='line'>351</span>                      *   // Make sure the status code is OK.
@@ -418,10 +418,10 @@
 <span class='line'>411</span>                      *   }
 <span class='line'>412</span>                      *   alert("Payload: ", msg.payload);
 <span class='line'>413</span>                      * }
-<span class='line'>414</span>                      * var ctxlink = connect.byId("ctxlink");
-<span class='line'>415</span>                      * var oauthtoken = connect.oauth.token();
+<span class='line'>414</span>                      * var ctxlink = Sfdc.canvas.byId("ctxlink");
+<span class='line'>415</span>                      * var oauthtoken = Sfdc.canvas.oauth.token();
 <span class='line'>416</span>                      * ctxlink.onclick=function() {
-<span class='line'>417</span>                      *   connect.client.ctx(callback, oauthtoken)};
+<span class='line'>417</span>                      *   Sfdc.canvas.client.ctx(callback, oauthtoken)};
 <span class='line'>418</span>                      * }
 <span class='line'>419</span>                      */</span><span class="WHIT">
 <span class='line'>420</span> </span><span class="WHIT">                    </span><span class="NAME">ctx</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">clientscb</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">client</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
