@@ -111,10 +111,10 @@
          * @function
          * @description Sets, gets, or removes the <code>access_token</code> from this JavaScript object. <br>
          <p>This function does one of three things: <br>
-         	1) If the 't' parameter isn't passed in, the current value for the <code>access_token</code> value is returned. <br>
-         	2) If the the 't' parameter is null, the <code>access_token</code> value is removed. <br>
-         	3) Otherwise the <code>access_token</code>  value is set to the 't' parameter and then returned.<br><br>
-         	Note: for longer-term storage of the OAuth token, store it server-side in the session.  Access tokens
+                1) If the 't' parameter isn't passed in, the current value for the <code>access_token</code> value is returned. <br>
+                2) If the the 't' parameter is null, the <code>access_token</code> value is removed. <br>
+                3) Otherwise the <code>access_token</code>  value is set to the 't' parameter and then returned.<br><br>
+                Note: for longer-term storage of the OAuth token, store it server-side in the session.  Access tokens
              should never be stored in cookies.
          * @param {String} [t] The OAuth token to set as the <code>access_token</code> value
          * @returns {String} The resulting <code>access_token</code> value if set; otherwise null
