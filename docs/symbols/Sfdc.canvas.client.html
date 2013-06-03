@@ -618,9 +618,9 @@ function callback(msg) {
   alert("Payload: ", msg.payload);
 }
 var ctxlink = Sfdc.canvas.byId("ctxlink");
-var oauthtoken = Sfdc.canvas.oauth.token();
+var client = Sfdc.canvas.oauth.client();
 ctxlink.onclick=function() {
-  Sfdc.canvas.client.ctx(callback, oauthtoken)};
+  Sfdc.canvas.client.ctx(callback, client)};
 }</pre>
 					
 					

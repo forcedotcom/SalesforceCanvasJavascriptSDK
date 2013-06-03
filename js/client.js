@@ -436,10 +436,10 @@
                      *   }
                      *   alert("Payload: ", msg.payload);
                      * }
-                     * var ctxlink = connect.byId("ctxlink");
-                     * var oauthtoken = connect.oauth.token();
+                     * var ctxlink = Sfdc.canvas.byId("ctxlink");
+                     * var client = Sfdc.canvas.oauth.client();
                      * ctxlink.onclick=function() {
-                     *   connect.client.ctx(callback, oauthtoken)};
+                     *   connect.client.ctx(callback, client)};
                      * }
                      */
                     ctx : function (clientscb, client) {

@@ -419,9 +419,9 @@
 <span class='line'>412</span>                      *   alert("Payload: ", msg.payload);
 <span class='line'>413</span>                      * }
 <span class='line'>414</span>                      * var ctxlink = Sfdc.canvas.byId("ctxlink");
-<span class='line'>415</span>                      * var oauthtoken = Sfdc.canvas.oauth.token();
+<span class='line'>415</span>                      * var client = Sfdc.canvas.oauth.client();
 <span class='line'>416</span>                      * ctxlink.onclick=function() {
-<span class='line'>417</span>                      *   Sfdc.canvas.client.ctx(callback, oauthtoken)};
+<span class='line'>417</span>                      *   Sfdc.canvas.client.ctx(callback, client)};
 <span class='line'>418</span>                      * }
 <span class='line'>419</span>                      */</span><span class="WHIT">
 <span class='line'>420</span> </span><span class="WHIT">                    </span><span class="NAME">ctx</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">clientscb</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">client</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
