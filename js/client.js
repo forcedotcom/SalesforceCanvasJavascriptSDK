@@ -1,29 +1,4 @@
 /**
-* Copyright (c) 2011, salesforce.com, inc.
-* All rights reserved.
-*
-* Redistribution and use in source and binary forms, with or without modification, are permitted provided
-* that the following conditions are met:
-*
-* Redistributions of source code must retain the above copyright notice, this list of conditions and the
-* following disclaimer.
-*
-* Redistributions in binary form must reproduce the above copyright notice, this list of conditions and
-* the following disclaimer in the documentation and/or other materials provided with the distribution.
-*
-* Neither the name of salesforce.com, inc. nor the names of its contributors may be used to endorse or
-* promote products derived from this software without specific prior written permission.
-*
-* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED
-* WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
-* PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
-* ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
-* TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-* HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-* NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-* POSSIBILITY OF SUCH DAMAGE.
-*/
-/**
  *@namespace Sfdc.canvas.client
  *@name Sfdc.canvas.client
  */
@@ -31,7 +6,7 @@
 
     "use strict";
 
-    var pversion, cversion = "28.0";
+    var pversion, cversion = "29.0";
 
     var module =   (function() /**@lends module */ {
 
@@ -122,7 +97,7 @@
             // Submodules...
 
             var event = (function() {
-                var subscriptions = {};
+                var subscriptions = {}, STR_EVT = "sfdc.streamingapi";
 
                 function validName(name, res) {
                     var msg, r = $$.validEventName(name, res);
@@ -135,16 +110,41 @@
                     }
                 }
 
+                function findSubscription(event) {
+                    var s, name = event.name;
+
+                    if (name === STR_EVT) {
+                        s = subscriptions[name][event.params.topic];
+                    } else {
+                        s = subscriptions[name];
+                    }
+
+                    if (!$$.isNil(s) && $$.isFunction(s.onData)) {
+                        return s;
+                    }
+
+                    return null;
+                }
+
                 return  {
                     callback : function (data) {
                         var event = data.payload,
-                            subscription = subscriptions[event.name];
+                            subscription = findSubscription(event),
+                            func;
+
                         if (!$$.isNil(subscription)) {
-                            if ($$.isFunction(subscription.onData)) {
-                                subscription.onData(event.payload);
+                            if (event.method === "onData") {
+                                func = subscription.onData;
+                            } else if (event.method === "onComplete") {
+                                func = subscription.onComplete;
+                            }
+
+                            if (!$$.isNil(func) && $$.isFunction(func)) {
+                                func(event.payload);
                             }
                         }
                     },
+
                     /**
                      * @description Subscribes to parent or custom events. Events
                      * with the namespaces 'canvas', 'sfdc', 'force', 'salesforce', and 'chatter' are reserved by Salesforce.
@@ -193,6 +193,21 @@
                      *     ]);
                      * });
                      *
+                     * @example
+                     * // Subscribe to Streaming API events.  
+                     * // A topic to subscribe to must be passed in as part of the name.
+                     * // The 'onComplete' method may be defined, and will fire when the subscription is complete.
+                     * Sfdc.canvas(function() {
+                     *     sr = JSON.parse('<%=signedRequestJson%>');
+                     *     var topics = ["/topic/InvoiceStatements"];
+                     *     var params = [{topic:topics[0]}];
+                     *     Sfdc.canvas.client.subscribe(sr.client, [
+                     *         {name : 'sfdc.streamingapi', params:{topic:"/topic/InvoiceStatements"}},
+                     *          onData : handler1, onComplete : handler2}
+                     *     ]);
+                     * });
+                     *
+                     * 
                      */
                     subscribe : function(client, s) {
                         var subs = {};
@@ -203,13 +218,25 @@
 
                         $$.each($$.isArray(s) ? s : [s], function (v) {
                             if (!$$.isNil(v.name)) {
-                                validName(v.name, "canvas");
-                                subscriptions[v.name] = v;
+                                validName(v.name, ["canvas", "sfdc"]);
+
+                                if (v.name === STR_EVT) {
+                                    if (!$$.isNil(v.params) && !$$.isNil(v.params.topic)) {
+                                        if ($$.isNil(subscriptions[v.name])) {
+                                            subscriptions[v.name] = {};
+                                        }
+                                        subscriptions[v.name][v.params.topic] = v;
+                                    } else {
+                                        throw "[" +STR_EVT +"] topic is missing";
+                                    }
+                                } else {
+                                    subscriptions[v.name] = v;
+                                }
+
                                 subs[v.name] = {
                                     params : v.params
                                 };
-                            }
-                            else {
+                            } else {
                                 throw "subscription does not have a 'name'";
                             }
                         });
@@ -244,6 +271,15 @@
                      *     sr = JSON.parse('<%=signedRequestJson%>');
                      *     Sfdc.canvas.client.unsubscribe(sr.client, ['canvas.scroll', 'foo.bar']);
                      *});
+                     *
+                     * @example
+                     * //Unsubscribe from Streaming API events.
+                     * //The topic to unsubscribe from must be included in the name
+                     * Sfdc.canvas(function() {
+                     *     sr = JSON.parse('<%=signedRequestJson%>');
+                     *     Sfdc.canvas.client.unsubscribe(sr.client, {name : 'sfdc.streamingapi',
+                     *               params:{topic:"/topic/InvoiceStatements"}});
+                     *});
                      */
                     unsubscribe : function(client, s) {
                         // client can pass in the handler object or just the name
@@ -260,11 +296,18 @@
                         else {
                             $$.each($$.isArray(s) ? s : [s], function (v) {
                                 var name = v.name ? v.name : v;
-                                validName(name, "canvas");
+                                validName(name, ["canvas", "sfdc"]);
                                 subs[name] = {
                                     params : v.params
                                 };
-                                delete subscriptions[name];
+                                if (name === STR_EVT) {
+                                    delete subscriptions[name][v.params.topic];
+                                    if ($$.size(subscriptions[name]) <= 0) {
+                                        delete subscriptions[name];
+                                    }
+                                } else {
+                                    delete subscriptions[name];
+                                }
                             });
                         }
                         if (!client.isVF) {
@@ -351,7 +394,7 @@
                      * var url = sr.context.links.chatterFeedsUrl+"/news/"
                      *                                   +sr.context.user.userId+"/feed-items";
                      * var body = {body : {messageSegments : [{type: "Text", text: "Some Chatter Post"}]}};
-                     * connect.client.ajax(url,
+                     * Sfdc.canvas.client.ajax(url,
                      *   {client : sr.client,
                      *     method: 'POST',
                      *     contentType: "application/json",
@@ -370,7 +413,7 @@
                      * var chatterUsersUrl = sr.context.links.chatterUsersUrl;
                      *
                      * // Make an XHR call back to Salesforce through the supplied browser proxy.
-                     * connect.client.ajax(chatterUsersUrl,
+                     * Sfdc.canvas.client.ajax(chatterUsersUrl,
                      *   {client : sr.client,
                      *   success : function(data){
                      *   // Make sure the status code is OK.
@@ -436,10 +479,10 @@
                      *   }
                      *   alert("Payload: ", msg.payload);
                      * }
-                     * var ctxlink = connect.byId("ctxlink");
-                     * var oauthtoken = connect.oauth.token();
+                     * var ctxlink = Sfdc.canvas.byId("ctxlink");
+                     * var client = Sfdc.canvas.oauth.client();
                      * ctxlink.onclick=function() {
-                     *   connect.client.ctx(callback, oauthtoken)};
+                     *   Sfdc.canvas.client.ctx(callback, client)};
                      * }
                      */
                     ctx : function (clientscb, client) {
@@ -458,7 +501,7 @@
                     },
                     /**
                      * @description Returns the current version of the client.
-                     * @returns {Object} {clientVersion : "28.0", paranetVersion : "28.0"}.
+                     * @returns {Object} {clientVersion : "29.0", parentVersion : "29.0"}.
                      */
                     version : function() {
                         return {clientVersion: cversion, parentVersion : pversion};
