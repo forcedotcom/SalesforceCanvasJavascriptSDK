@@ -226,10 +226,10 @@
 <span class='line'>219</span>                      * });
 <span class='line'>220</span>                      *
 <span class='line'>221</span>                      * @example
-<span class='line'>222</span>                      * // Subscribe to Streaming API events.  
-<span class='line'>223</span>                      * // The push topic to subscribe to must be passed in.
-<span class='line'>224</span>                      * // The 'onComplete' method may be defined,
-<span class='line'>225</span> 		     * // and  will fire when the subscription is complete.
+<span class='line'>222</span>                      * //Subscribe to Streaming API events.  
+<span class='line'>223</span>                      * //The PushTopic to subscribe to must be passed in.
+<span class='line'>224</span>                      * //The 'onComplete' method may be defined,
+<span class='line'>225</span> 		     * //and will fire when the subscription is complete.
 <span class='line'>226</span>                      * Sfdc.canvas(function() {
 <span class='line'>227</span>                      *     sr = JSON.parse('&lt;%=signedRequestJson%>');
 <span class='line'>228</span>                      *     var handler1 = function(){ console.log("onData done");},
@@ -307,7 +307,7 @@
 <span class='line'>300</span>                      *
 <span class='line'>301</span>                      * @example
 <span class='line'>302</span>                      * //Unsubscribe from Streaming API events.
-<span class='line'>303</span>                      * //The topic to unsubscribe from must be included in the name.
+<span class='line'>303</span>                      * //The PushTopic to unsubscribe from  must be passed in.
 <span class='line'>304</span>                      * Sfdc.canvas(function() {
 <span class='line'>305</span>                      *     sr = JSON.parse('&lt;%=signedRequestJson%>');
 <span class='line'>306</span>                      *     Sfdc.canvas.client.unsubscribe(sr.client, {name : 'sfdc.streamingapi',
