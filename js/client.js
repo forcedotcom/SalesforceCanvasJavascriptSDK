@@ -219,10 +219,10 @@
                      * });
                      *
                      * @example
-                     * // Subscribe to Streaming API events.  
-                     * // The push topic to subscribe to must be passed in.
-                     * // The 'onComplete' method may be defined,
-		     * // and  will fire when the subscription is complete.
+                     * //Subscribe to Streaming API events.  
+                     * //The PushTopic to subscribe to must be passed in.
+                     * //The 'onComplete' method may be defined,
+		     * //and will fire when the subscription is complete.
                      * Sfdc.canvas(function() {
                      *     sr = JSON.parse('<%=signedRequestJson%>');
                      *     var handler1 = function(){ console.log("onData done");},
@@ -300,7 +300,7 @@
                      *
                      * @example
                      * //Unsubscribe from Streaming API events.
-                     * //The topic to unsubscribe from must be included in the name.
+                     * //The PushTopic to unsubscribe from  must be passed in.
                      * Sfdc.canvas(function() {
                      *     sr = JSON.parse('<%=signedRequestJson%>');
                      *     Sfdc.canvas.client.unsubscribe(sr.client, {name : 'sfdc.streamingapi',
