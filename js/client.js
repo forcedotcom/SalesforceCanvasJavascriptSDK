@@ -222,12 +222,12 @@
                      * //Subscribe to Streaming API events.  
                      * //The PushTopic to subscribe to must be passed in.
                      * //The 'onComplete' method may be defined,
-		     * //and will fire when the subscription is complete.
+                     * //and will fire when the subscription is complete.
                      * Sfdc.canvas(function() {
                      *     sr = JSON.parse('<%=signedRequestJson%>');
                      *     var handler1 = function(){ console.log("onData done");},
                      *     handler2 = function(){ console.log("onComplete done");};
-		     *     Sfdc.canvas.client.subscribe(sr.client,
+                     *     Sfdc.canvas.client.subscribe(sr.client,
                      *         {name : 'sfdc.streamingapi', params:{topic:"/topic/InvoiceStatements"}},
                      *          onData : handler1, onComplete : handler2}
                      *     );
