@@ -1,28 +1,3 @@
-/**
-* Copyright (c) 2011, salesforce.com, inc.
-* All rights reserved.
-*
-* Redistribution and use in source and binary forms, with or without modification, are permitted provided
-* that the following conditions are met:
-*
-* Redistributions of source code must retain the above copyright notice, this list of conditions and the
-* following disclaimer.
-*
-* Redistributions in binary form must reproduce the above copyright notice, this list of conditions and
-* the following disclaimer in the documentation and/or other materials provided with the distribution.
-*
-* Neither the name of salesforce.com, inc. nor the names of its contributors may be used to endorse or
-* promote products derived from this software without specific prior written permission.
-*
-* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED
-* WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
-* PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
-* ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
-* TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-* HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-* NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-* POSSIBILITY OF SUCH DAMAGE.
-*/
 (function(global) {
   if(global.Sfdc && global.Sfdc.canvas) {
     return
@@ -46,6 +21,8 @@
     return value !== null && typeof value === "object"
   }, isString:function(value) {
     return value !== null && typeof value == "string"
+  }, appearsJson:function(value) {
+    return/^\{.*\}$/.test(value)
   }, nop:function() {
   }, invoker:function(fn) {
     if($.isFunction(fn)) {
@@ -144,9 +121,9 @@
         })
       }else {
         if(encode) {
-          s[s.length] = encodeURIComponent(key) + "=" + encodeURIComponent(value)
+          s[s.length] = encodeURIComponent(key) + "\x3d" + encodeURIComponent(value)
         }else {
-          s[s.length] = key + "=" + value
+          s[s.length] = key + "\x3d" + value
         }
       }
     }
@@ -161,10 +138,10 @@
         }
       }
     }
-    return s.join("&").replace(/%20/g, "+")
+    return s.join("\x26").replace(/%20/g, "+")
   }, objectify:function(q) {
     var o = {};
-    q.replace(new RegExp("([^?=&]+)(=([^&]*))?", "g"), function($0, $1, $2, $3) {
+    q.replace(new RegExp("([^?\x3d\x26]+)(\x3d([^\x26]*))?", "g"), function($0, $1, $2, $3) {
       o[$1] = $3
     });
     return o
@@ -175,7 +152,7 @@
       return url
     }
     url = url.replace(/#.*$/, "");
-    url += /^\#/.test(q) ? q : (/\?/.test(url) ? "&" : "?") + q;
+    url += /^\#/.test(q) ? q : (/\?/.test(url) ? "\x26" : "?") + q;
     return url
   }, extend:function(dest) {
     $.each($.slice(arguments, 1), function(mixin, i) {
@@ -291,10 +268,7 @@
   if(!global.Sfdc) {
     global.Sfdc = {}
   }
-  global.Sfdc.canvas = canvas;
-  if(!global.Sfdc.JSON) {
-    global.Sfdc.JSON = JSON
-  }
+  global.Sfdc.canvas = canvas
 })(this);
 (function($$) {
   var module = function() {
@@ -306,18 +280,18 @@
       if(days) {
         date = new Date;
         date.setTime(date.getTime() + days * 24 * 60 * 60 * 1E3);
-        expires = "; expires=" + date.toGMTString()
+        expires = "; expires\x3d" + date.toGMTString()
       }else {
         expires = ""
       }
-      document.cookie = name + "=" + value + expires + "; path=/" + (isSecure() === true ? "; secure" : "")
+      document.cookie = name + "\x3d" + value + expires + "; path\x3d/" + (isSecure() === true ? "; secure" : "")
     }
     function get(name) {
       var nameEQ, ca, c, i;
       if($$.isUndefined(name)) {
         return document.cookie.split(";")
       }
-      nameEQ = name + "=";
+      nameEQ = name + "\x3d";
       ca = document.cookie.split(";");
       for(i = 0;i < ca.length;i += 1) {
         c = ca[i];
@@ -349,10 +323,10 @@
       if(!$$.isUndefined(params)) {
         for(n in params) {
           if(params.hasOwnProperty(n)) {
-            r.push(n + "=" + params[n])
+            r.push(n + "\x3d" + params[n])
           }
         }
-        return"?" + r.join("&")
+        return"?" + r.join("\x26")
       }
       return""
     }
@@ -368,7 +342,7 @@
       ctx.params.state = ctx.params.state || ctx.callback || window.location.pathname;
       ctx.params.display = ctx.params.display || "popup";
       uri = uri + query(ctx.params);
-      childWindow = window.open(uri, "OAuth", "status=0,toolbar=0,menubar=0,resizable=0,scrollbars=1,top=50,left=50,height=500,width=680")
+      childWindow = window.open(uri, "OAuth", "status\x3d0,toolbar\x3d0,menubar\x3d0,resizable\x3d0,scrollbars\x3d1,top\x3d50,left\x3d50,height\x3d500,width\x3d680")
     }
     function token(t) {
       if(arguments.length === 0) {
@@ -403,9 +377,9 @@
         if(hash.indexOf("#") === 0) {
           hash = hash.substr(1)
         }
-        nvp = hash.split("&");
+        nvp = hash.split("\x26");
         for(i = 0;i < nvp.length;i += 1) {
-          nv = nvp[i].split("=");
+          nv = nvp[i].split("\x3d");
           n = nv[0];
           v = decodeURIComponent(nv[1]);
           if("access_token" === n) {
@@ -445,9 +419,9 @@
       var i, nvs, nv, q = self.location.search;
       if(q) {
         q = q.substring(1);
-        nvs = q.split("&");
+        nvs = q.split("\x26");
         for(i = 0;i < nvs.length;i += 1) {
-          nv = nvs[i].split("=");
+          nv = nvs[i].split("\x3d");
           if("loginUrl" === nv[0]) {
             return decodeURIComponent(nv[1]) + "/services/oauth2/authorize"
           }
@@ -489,13 +463,17 @@
   var module = function() {
     var internalCallback;
     function postMessage(message, target_url, target) {
+      var sfdcJson = Sfdc.JSON || JSON;
       if($$.isNil(target_url)) {
         throw"ERROR: target_url was not supplied on postMessage";
       }
       var otherWindow = $$.stripUrl(target_url);
       target = target || parent;
       if(window.postMessage) {
-        message = Sfdc.JSON.stringify(message);
+        if($$.isObject(message)) {
+          message.targetModule = "Canvas"
+        }
+        message = sfdcJson.stringify(message);
         target.postMessage(message, otherWindow)
       }
     }
@@ -504,17 +482,27 @@
         if(callback) {
           internalCallback = function(e) {
             var data, r;
-            if(typeof source_origin === "string" && e.origin !== source_origin) {
-              return false
-            }
-            if($$.isFunction(source_origin)) {
-              r = source_origin(e.origin, e.data);
-              if(r === false) {
+            var sfdcJson = Sfdc.JSON || JSON;
+            if(!$$.isNil(e)) {
+              if(typeof source_origin === "string" && e.origin !== source_origin) {
                 return false
               }
+              if($$.isFunction(source_origin)) {
+                r = source_origin(e.origin, e.data);
+                if(r === false) {
+                  return false
+                }
+              }
+              if($$.appearsJson(e.data)) {
+                try {
+                  data = sfdcJson.parse(e.data)
+                }catch(ignore) {
+                }
+                if(!$$.isNil(data) && ($$.isNil(data.targetModule) || data.targetModule === "Canvas")) {
+                  callback(data, r)
+                }
+              }
             }
-            data = Sfdc.JSON.parse(e.data);
-            callback(data, r)
           }
         }
         if(window.addEventListener) {
@@ -538,7 +526,7 @@
   $$.module("Sfdc.canvas.xd", module)
 })(Sfdc.canvas, this);
 (function($$) {
-  var pversion, cversion = "28.0";
+  var pversion, cversion = "29.0";
   var module = function() {
     var purl;
     function startsWithHttp(u, d) {
@@ -567,8 +555,6 @@
       if(data) {
         if(submodules[data.type]) {
           submodules[data.type].callback(data)
-        }else {
-          throw"Undefined event type " + data.type;
         }
       }
     }
@@ -606,7 +592,7 @@
         return true
       }
       var event = function() {
-        var subscriptions = {};
+        var subscriptions = {}, STR_EVT = "sfdc.streamingapi";
         function validName(name, res) {
           var msg, r = $$.validEventName(name, res);
           if(r !== 0) {
@@ -614,11 +600,30 @@
             throw msg[r];
           }
         }
+        function findSubscription(event) {
+          var s, name = event.name;
+          if(name === STR_EVT) {
+            s = subscriptions[name][event.params.topic]
+          }else {
+            s = subscriptions[name]
+          }
+          if(!$$.isNil(s) && $$.isFunction(s.onData)) {
+            return s
+          }
+          return null
+        }
         return{callback:function(data) {
-          var event = data.payload, subscription = subscriptions[event.name];
+          var event = data.payload, subscription = findSubscription(event), func;
           if(!$$.isNil(subscription)) {
-            if($$.isFunction(subscription.onData)) {
-              subscription.onData(event.payload)
+            if(event.method === "onData") {
+              func = subscription.onData
+            }else {
+              if(event.method === "onComplete") {
+                func = subscription.onComplete
+              }
+            }
+            if(!$$.isNil(func) && $$.isFunction(func)) {
+              func(event.payload)
             }
           }
         }, subscribe:function(client, s) {
@@ -628,8 +633,19 @@
           }
           $$.each($$.isArray(s) ? s : [s], function(v) {
             if(!$$.isNil(v.name)) {
-              validName(v.name, "canvas");
-              subscriptions[v.name] = v;
+              validName(v.name, ["canvas", "sfdc"]);
+              if(v.name === STR_EVT) {
+                if(!$$.isNil(v.params) && !$$.isNil(v.params.topic)) {
+                  if($$.isNil(subscriptions[v.name])) {
+                    subscriptions[v.name] = {}
+                  }
+                  subscriptions[v.name][v.params.topic] = v
+                }else {
+                  throw"[" + STR_EVT + "] topic is missing";
+                }
+              }else {
+                subscriptions[v.name] = v
+              }
               subs[v.name] = {params:v.params}
             }else {
               throw"subscription does not have a 'name'";
@@ -649,9 +665,20 @@
           }else {
             $$.each($$.isArray(s) ? s : [s], function(v) {
               var name = v.name ? v.name : v;
-              validName(name, "canvas");
+              validName(name, ["canvas", "sfdc"]);
               subs[name] = {params:v.params};
-              delete subscriptions[name]
+              if(name === STR_EVT) {
+                if(!$$.isNil(subscriptions[name])) {
+                  if(!$$.isNil(subscriptions[name][v.params.topic])) {
+                    delete subscriptions[name][v.params.topic]
+                  }
+                  if($$.size(subscriptions[name]) <= 0) {
+                    delete subscriptions[name]
+                  }
+                }
+              }else {
+                delete subscriptions[name]
+              }
             })
           }
           if(!client.isVF) {
@@ -683,6 +710,7 @@
         }}
       }();
       var services = function() {
+        var sr;
         return{ajax:function(url, settings) {
           var ccb, config, defaults;
           if(!url) {
@@ -713,6 +741,11 @@
           return $$.oauth && $$.oauth.token(t)
         }, version:function() {
           return{clientVersion:cversion, parentVersion:pversion}
+        }, signedrequest:function(s) {
+          if(arguments.length > 0) {
+            sr = s
+          }
+          return sr
         }}
       }();
       var frame = function() {
@@ -759,7 +792,7 @@
       return{services:services, frame:frame, event:event, callback:callback}
     }();
     $$.xd.receive(xdCallback, getTargetOrigin);
-    return{ctx:submodules.services.ctx, ajax:submodules.services.ajax, token:submodules.services.token, version:submodules.services.version, resize:submodules.frame.resize, size:submodules.frame.size, autogrow:submodules.frame.autogrow, subscribe:submodules.event.subscribe, unsubscribe:submodules.event.unsubscribe, publish:submodules.event.publish}
+    return{ctx:submodules.services.ctx, ajax:submodules.services.ajax, token:submodules.services.token, version:submodules.services.version, resize:submodules.frame.resize, size:submodules.frame.size, autogrow:submodules.frame.autogrow, subscribe:submodules.event.subscribe, unsubscribe:submodules.event.unsubscribe, publish:submodules.event.publish, signedrequest:submodules.services.signedrequest}
   }();
   $$.module("Sfdc.canvas.client", module)
 })(Sfdc.canvas);

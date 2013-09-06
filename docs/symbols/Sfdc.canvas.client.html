@@ -3,10 +3,6 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 	<head>
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-		<meta http-equiv="Pragma" content="no-cache">
-		<meta http-equiv="cache-control" content="no-cache">
-		<meta http-equiv="expires" content="Mon, 22 Jul 2002 11:12:01 GMT">
-
 		<meta name="generator" content="JsDoc Toolkit" />
 		
 		<title>JsDoc Reference - Sfdc.canvas.client</title>
@@ -52,7 +48,7 @@ pre.code
 {
 	margin-top: 24px;
 	float: left;
-	width: 225px;
+	width: 160px;
 	position: absolute;
 	left: 8px;
 	background-color: #F3F3F3;
@@ -61,7 +57,7 @@ pre.code
 
 #content
 {
-	margin-left: 255px;
+	margin-left: 190px;
 	width: 600px;
 }
 
@@ -151,7 +147,7 @@ ul.inheritsList
 }
 
 .detailList {
-	margin-left: 20px;
+	margin-left: 20px; 
 	line-height: 15px;
 }
 .detailList dt { margin-left: 20px; }
@@ -178,7 +174,7 @@ ul.inheritsList
 	</head>
 
 	<body>
-<!-- ============================== header ================================= -->
+<!-- ============================== header ================================= -->	
 		<!-- begin static/header.html -->
 		<div id="header">
 </div>
@@ -205,7 +201,7 @@ ul.inheritsList
 <hr />
 			<!-- end publish.classesIndex -->
 		</div>
-
+		
 		<div id="content">
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
@@ -213,18 +209,19 @@ ul.inheritsList
 				Namespace Sfdc.canvas.client
 			</h1>
 
-<!-- ============================== class summary ========================== -->
+<!-- ============================== class summary ========================== -->			
 			<p class="description">
 				
-
-				Sfdc.canvas.client
-
 				
-					<br /><i>Defined in: </i> <a href="../symbols/src/_home_khotchkiss_dev_app_184_patch_core_platform-connect_jslibrary_canvas_client_client.js.html">client.js</a>.
+			
+				Sfdc.canvas.client
+				
+				
+					<br /><i>Defined in: </i> <a href="../symbols/src/SalesforceCanvasJavascriptSDK_js_client.js.html">client.js</a>.
 				
 			</p>
 
-<!-- ============================== constructor summary ==================== -->
+<!-- ============================== constructor summary ==================== -->			
 			
 			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class Sfdc.canvas.client.">
 				<caption>Namespace Summary</caption>
@@ -341,31 +338,31 @@ adjusts the frame accordingly.</div>
 					</tbody>
 				</table>
 				
-
+				
 				
 			
 <!-- ============================== events summary ======================== -->
 			
 
-<!-- ============================== constructor details ==================== -->
+<!-- ============================== constructor details ==================== -->		
 			
 			<div class="details"><a name="constructor"> </a>
 				<div class="sectionTitle">
 					Namespace Detail
 				</div>
-
+				
 				<div class="fixedFont">
 						<b>Sfdc.canvas.client</b>
 				</div>
-
+				
 				<div class="description">
 					
 					
 				</div>
-
 				
-
-
+				
+				
+				
 					
 					
 					
@@ -377,10 +374,10 @@ adjusts the frame accordingly.</div>
 			</div>
 			
 
-<!-- ============================== field details ========================== -->
+<!-- ============================== field details ========================== -->		
 			
 
-<!-- ============================== method details ========================= -->
+<!-- ============================== method details ========================= -->		
 			
 				<div class="sectionTitle">
 					Method Detail
@@ -388,10 +385,10 @@ adjusts the frame accordingly.</div>
 				
 					<a name="ajax"> </a>
 					<div class="fixedFont">
-
+					
 					
 					<b>ajax</b>(url, settings)
-
+					
 					</div>
 					<div class="description">
 						Performs a cross-domain, asynchronous HTTP request.
@@ -399,7 +396,7 @@ adjusts the frame accordingly.</div>
 						
 						
 					</div>
-
+					
 					
 					
 					<pre class="code">//Posting to a Chatter feed:
@@ -438,7 +435,7 @@ Sfdc.canvas.client.ajax(chatterUsersUrl,
 })};</pre>
 					
 					
-
+					
 						
 							<dl class="detailList">
 							<dt class="heading">Parameters:</dt>
@@ -521,10 +518,10 @@ Sfdc.canvas.client.ajax(chatterUsersUrl,
 				
 					<a name="autogrow"> </a>
 					<div class="fixedFont">
-
+					
 					
 					<b>autogrow</b>(client, b, interval)
-
+					
 					</div>
 					<div class="description">
 						Starts or stops a timer which checks the content size of the iFrame and
@@ -536,7 +533,7 @@ Note: you should turn off scrolling before this call, otherwise you might get a 
 						
 						
 					</div>
-
+					
 					
 					
 					<pre class="code">
@@ -559,7 +556,7 @@ Sfdc.canvas(function() {
 });</pre>
 					
 					
-
+					
 						
 							<dl class="detailList">
 							<dt class="heading">Parameters:</dt>
@@ -595,17 +592,17 @@ Sfdc.canvas(function() {
 				
 					<a name="ctx"> </a>
 					<div class="fixedFont">
-
+					
 					
 					<b>ctx</b>(clientscb, client)
-
+					
 					</div>
 					<div class="description">
 						Returns the context for the current user and organization.
 						
 						
 					</div>
-
+					
 					
 					
 					<pre class="code">// Gets context in the canvas app.
@@ -618,13 +615,13 @@ function callback(msg) {
   alert("Payload: ", msg.payload);
 }
 var ctxlink = Sfdc.canvas.byId("ctxlink");
-var oauthtoken = Sfdc.canvas.oauth.token();
+var client = Sfdc.canvas.oauth.client();
 ctxlink.onclick=function() {
-  Sfdc.canvas.client.ctx(callback, oauthtoken)};
+  Sfdc.canvas.client.ctx(callback, client)};
 }</pre>
 					
 					
-
+					
 						
 							<dl class="detailList">
 							<dt class="heading">Parameters:</dt>
@@ -654,10 +651,10 @@ ctxlink.onclick=function() {
 				
 					<a name="publish"> </a>
 					<div class="fixedFont">
-
+					
 					
 					<b>publish</b>(client, e)
-
+					
 					</div>
 					<div class="description">
 						Publishes a custom event. Events are published to all subscribing canvas applications
@@ -666,7 +663,7 @@ application events. Events can have payloads of arbitrary JSON objects.
 						
 						
 					</div>
-
+					
 					
 					
 					<pre class="code">// Publish the foo.bar event with the specified payload.
@@ -677,7 +674,7 @@ Sfdc.canvas(function() {
 });</pre>
 					
 					
-
+					
 						
 							<dl class="detailList">
 							<dt class="heading">Parameters:</dt>
@@ -707,10 +704,10 @@ Sfdc.canvas(function() {
 				
 					<a name="resize"> </a>
 					<div class="fixedFont">
-
+					
 					
 					<b>resize</b>(client, size)
-
+					
 					</div>
 					<div class="description">
 						Informs the parent window to resize the canvas iFrame. If no parameters are specified,
@@ -720,7 +717,7 @@ pass in an object with height and/or width properties.
 						
 						
 					</div>
-
+					
 					
 					
 					<pre class="code">//Automatically determine the size
@@ -742,7 +739,7 @@ Sfdc.canvas(function() {
 });</pre>
 					
 					
-
+					
 						
 							<dl class="detailList">
 							<dt class="heading">Parameters:</dt>
@@ -772,17 +769,17 @@ Sfdc.canvas(function() {
 				
 					<a name="size"> </a>
 					<div class="fixedFont">
-
+					
 					<span class="light">{Object}</span>
 					<b>size</b>()
-
+					
 					</div>
 					<div class="description">
 						Returns the current size of the iFrame.
 						
 						
 					</div>
-
+					
 					
 					
 					<pre class="code">//get the size of the iFrame and print out each component.
@@ -795,7 +792,7 @@ console.log("pageWidth; " + sizes.widths.pageWidth);
 console.log("scrollLeft; " + sizes.widths.scrollLeft);</pre>
 					
 					
-
+					
 						
 						
 						
@@ -821,10 +818,10 @@ console.log("scrollLeft; " + sizes.widths.scrollLeft);</pre>
 				
 					<a name="subscribe"> </a>
 					<div class="fixedFont">
-
+					
 					
 					<b>subscribe</b>(client, s)
-
+					
 					</div>
 					<div class="description">
 						Subscribes to parent or custom events. Events
@@ -834,7 +831,7 @@ Event names must be in the form <code>namespace.eventname</code>.
 						
 						
 					</div>
-
+					
 					
 					
 					<pre class="code">// Subscribe to the parent window onscroll event.
@@ -872,8 +869,22 @@ Sfdc.canvas(function() {
     ]);
 });</pre>
 					
+					<pre class="code">//Subscribe to Streaming API events.  
+//The PushTopic to subscribe to must be passed in.
+//The 'onComplete' method may be defined,
+//and will fire when the subscription is complete.
+Sfdc.canvas(function() {
+    sr = JSON.parse('<%=signedRequestJson%>');
+    var handler1 = function(){ console.log("onData done");},
+    handler2 = function(){ console.log("onComplete done");};
+    Sfdc.canvas.client.subscribe(sr.client,
+        {name : 'sfdc.streamingapi', params:{topic:"/topic/InvoiceStatements"}},
+         onData : handler1, onComplete : handler2}
+    );
+});</pre>
 					
-
+					
+					
 						
 							<dl class="detailList">
 							<dt class="heading">Parameters:</dt>
@@ -903,17 +914,17 @@ Sfdc.canvas(function() {
 				
 					<a name="unsubscribe"> </a>
 					<div class="fixedFont">
-
+					
 					
 					<b>unsubscribe</b>(client, s)
-
+					
 					</div>
 					<div class="description">
 						Unsubscribes from parent or custom events.
 						
 						
 					</div>
-
+					
 					
 					
 					<pre class="code">//Unsubscribe from the canvas.scroll method.
@@ -934,8 +945,16 @@ Sfdc.canvas(function() {
     Sfdc.canvas.client.unsubscribe(sr.client, ['canvas.scroll', 'foo.bar']);
 });</pre>
 					
+					<pre class="code">//Unsubscribe from Streaming API events.
+//The PushTopic to unsubscribe from  must be passed in.
+Sfdc.canvas(function() {
+    sr = JSON.parse('<%=signedRequestJson%>');
+    Sfdc.canvas.client.unsubscribe(sr.client, {name : 'sfdc.streamingapi',
+              params:{topic:"/topic/InvoiceStatements"}});
+});</pre>
 					
-
+					
+					
 						
 							<dl class="detailList">
 							<dt class="heading">Parameters:</dt>
@@ -964,18 +983,18 @@ Sfdc.canvas(function() {
 					
 				
 			
-
-<!-- ============================== event details ========================= -->
 			
-
+<!-- ============================== event details ========================= -->		
+			
+			
 			<hr />
 		</div>
 
-
+		
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.3.0 on Mon Apr 15 2013 20:39:45 GMT-0000 (GMT)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Wed Sep 04 2013 09:12:58 GMT-0600 (MDT)
 		</div>
 	</body>
 </html>

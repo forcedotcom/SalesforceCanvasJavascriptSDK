@@ -31,7 +31,7 @@
 
     "use strict";
 
-    var pversion, cversion = "28.0";
+    var pversion, cversion = "29.0";
 
     var module =   (function() /**@lends module */ {
 
@@ -65,9 +65,7 @@
                 if (submodules[data.type]) {
                     submodules[data.type].callback(data);
                 }
-                else {
-                    throw "Undefined event type " + data.type;
-                }
+                // Just ignore...
             }
         }
 
@@ -122,7 +120,7 @@
             // Submodules...
 
             var event = (function() {
-                var subscriptions = {};
+                var subscriptions = {}, STR_EVT = "sfdc.streamingapi";
 
                 function validName(name, res) {
                     var msg, r = $$.validEventName(name, res);
@@ -135,16 +133,41 @@
                     }
                 }
 
+                function findSubscription(event) {
+                    var s, name = event.name;
+
+                    if (name === STR_EVT) {
+                        s = subscriptions[name][event.params.topic];
+                    } else {
+                        s = subscriptions[name];
+                    }
+
+                    if (!$$.isNil(s) && $$.isFunction(s.onData)) {
+                        return s;
+                    }
+
+                    return null;
+                }
+
                 return  {
                     callback : function (data) {
                         var event = data.payload,
-                            subscription = subscriptions[event.name];
+                            subscription = findSubscription(event),
+                            func;
+
                         if (!$$.isNil(subscription)) {
-                            if ($$.isFunction(subscription.onData)) {
-                                subscription.onData(event.payload);
+                            if (event.method === "onData") {
+                                func = subscription.onData;
+                            } else if (event.method === "onComplete") {
+                                func = subscription.onComplete;
+                            }
+
+                            if (!$$.isNil(func) && $$.isFunction(func)) {
+                                func(event.payload);
                             }
                         }
                     },
+
                     /**
                      * @description Subscribes to parent or custom events. Events
                      * with the namespaces 'canvas', 'sfdc', 'force', 'salesforce', and 'chatter' are reserved by Salesforce.
@@ -193,6 +216,22 @@
                      *     ]);
                      * });
                      *
+                     * @example
+                     * //Subscribe to Streaming API events.  
+                     * //The PushTopic to subscribe to must be passed in.
+                     * //The 'onComplete' method may be defined,
+                     * //and will fire when the subscription is complete.
+                     * Sfdc.canvas(function() {
+                     *     sr = JSON.parse('<%=signedRequestJson%>');
+                     *     var handler1 = function(){ console.log("onData done");},
+                     *     handler2 = function(){ console.log("onComplete done");};
+                     *     Sfdc.canvas.client.subscribe(sr.client,
+                     *         {name : 'sfdc.streamingapi', params:{topic:"/topic/InvoiceStatements"}},
+                     *          onData : handler1, onComplete : handler2}
+                     *     );
+                     * });
+                     *
+                     * 
                      */
                     subscribe : function(client, s) {
                         var subs = {};
@@ -203,13 +242,25 @@
 
                         $$.each($$.isArray(s) ? s : [s], function (v) {
                             if (!$$.isNil(v.name)) {
-                                validName(v.name, "canvas");
-                                subscriptions[v.name] = v;
+                                validName(v.name, ["canvas", "sfdc"]);
+
+                                if (v.name === STR_EVT) {
+                                    if (!$$.isNil(v.params) && !$$.isNil(v.params.topic)) {
+                                        if ($$.isNil(subscriptions[v.name])) {
+                                            subscriptions[v.name] = {};
+                                        }
+                                        subscriptions[v.name][v.params.topic] = v;
+                                    } else {
+                                        throw "[" +STR_EVT +"] topic is missing";
+                                    }
+                                } else {
+                                    subscriptions[v.name] = v;
+                                }
+
                                 subs[v.name] = {
                                     params : v.params
                                 };
-                            }
-                            else {
+                            } else {
                                 throw "subscription does not have a 'name'";
                             }
                         });
@@ -244,6 +295,15 @@
                      *     sr = JSON.parse('<%=signedRequestJson%>');
                      *     Sfdc.canvas.client.unsubscribe(sr.client, ['canvas.scroll', 'foo.bar']);
                      *});
+                     *
+                     * @example
+                     * //Unsubscribe from Streaming API events.
+                     * //The PushTopic to unsubscribe from  must be passed in.
+                     * Sfdc.canvas(function() {
+                     *     sr = JSON.parse('<%=signedRequestJson%>');
+                     *     Sfdc.canvas.client.unsubscribe(sr.client, {name : 'sfdc.streamingapi',
+                     *               params:{topic:"/topic/InvoiceStatements"}});
+                     *});
                      */
                     unsubscribe : function(client, s) {
                         // client can pass in the handler object or just the name
@@ -260,11 +320,22 @@
                         else {
                             $$.each($$.isArray(s) ? s : [s], function (v) {
                                 var name = v.name ? v.name : v;
-                                validName(name, "canvas");
+                                validName(name, ["canvas", "sfdc"]);
                                 subs[name] = {
                                     params : v.params
                                 };
-                                delete subscriptions[name];
+                                if (name === STR_EVT) {
+                                    if(!$$.isNil(subscriptions[name])) {
+                                        if (!$$.isNil(subscriptions[name][v.params.topic])) {
+                                            delete subscriptions[name][v.params.topic];
+                                        }
+                                        if ($$.size(subscriptions[name]) <= 0) {
+                                            delete subscriptions[name];
+                                        }
+                                    }
+                                } else {
+                                    delete subscriptions[name];
+                                }
                             });
                         }
                         if (!client.isVF) {
@@ -328,6 +399,9 @@
             }());
 
             var services = (function() {
+
+                var sr;
+
                 return  {
                     /**
                      * @description Performs a cross-domain, asynchronous HTTP request.
@@ -351,7 +425,7 @@
                      * var url = sr.context.links.chatterFeedsUrl+"/news/"
                      *                                   +sr.context.user.userId+"/feed-items";
                      * var body = {body : {messageSegments : [{type: "Text", text: "Some Chatter Post"}]}};
-                     * connect.client.ajax(url,
+                     * Sfdc.canvas.client.ajax(url,
                      *   {client : sr.client,
                      *     method: 'POST',
                      *     contentType: "application/json",
@@ -370,7 +444,7 @@
                      * var chatterUsersUrl = sr.context.links.chatterUsersUrl;
                      *
                      * // Make an XHR call back to Salesforce through the supplied browser proxy.
-                     * connect.client.ajax(chatterUsersUrl,
+                     * Sfdc.canvas.client.ajax(chatterUsersUrl,
                      *   {client : sr.client,
                      *   success : function(data){
                      *   // Make sure the status code is OK.
@@ -436,10 +510,10 @@
                      *   }
                      *   alert("Payload: ", msg.payload);
                      * }
-                     * var ctxlink = connect.byId("ctxlink");
-                     * var oauthtoken = connect.oauth.token();
+                     * var ctxlink = Sfdc.canvas.byId("ctxlink");
+                     * var client = Sfdc.canvas.oauth.client();
                      * ctxlink.onclick=function() {
-                     *   connect.client.ctx(callback, oauthtoken)};
+                     *   Sfdc.canvas.client.ctx(callback, client)};
                      * }
                      */
                     ctx : function (clientscb, client) {
@@ -458,10 +532,22 @@
                     },
                     /**
                      * @description Returns the current version of the client.
-                     * @returns {Object} {clientVersion : "28.0", paranetVersion : "28.0"}.
+                     * @returns {Object} {clientVersion : "29.0", parentVersion : "29.0"}.
                      */
                     version : function() {
                         return {clientVersion: cversion, parentVersion : pversion};
+                    },
+                    /**
+                     * @description Temporary storage for the signed request. An alternative for users storing SR in
+                     * a global variable.
+                     * @param {Object} s signedrequest to be temporarily stored in Sfdc.canvas.client object.
+                     * @returns {Object} the value previously stored
+                     */
+                    signedrequest : function(s) {
+                        if (arguments.length > 0) {
+                            sr = s;
+                        }
+                        return sr;
                     }
                 };
             }());
@@ -630,7 +716,8 @@
             autogrow : submodules.frame.autogrow,
             subscribe : submodules.event.subscribe,
             unsubscribe : submodules.event.unsubscribe,
-            publish : submodules.event.publish
+            publish : submodules.event.publish,
+            signedrequest : submodules.services.signedrequest
         };
     }());
 
