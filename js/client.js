@@ -65,9 +65,7 @@
                 if (submodules[data.type]) {
                     submodules[data.type].callback(data);
                 }
-                else {
-                    throw "Undefined event type " + data.type;
-                }
+                // Just ignore...
             }
         }
 
@@ -327,9 +325,13 @@
                                     params : v.params
                                 };
                                 if (name === STR_EVT) {
-                                    delete subscriptions[name][v.params.topic];
-                                    if ($$.size(subscriptions[name]) <= 0) {
-                                        delete subscriptions[name];
+                                    if(!$$.isNil(subscriptions[name])) {
+                                        if (!$$.isNil(subscriptions[name][v.params.topic])) {
+                                            delete subscriptions[name][v.params.topic];
+                                        }
+                                        if ($$.size(subscriptions[name]) <= 0) {
+                                            delete subscriptions[name];
+                                        }
                                     }
                                 } else {
                                     delete subscriptions[name];
@@ -397,6 +399,9 @@
             }());
 
             var services = (function() {
+
+                var sr;
+
                 return  {
                     /**
                      * @description Performs a cross-domain, asynchronous HTTP request.
@@ -531,6 +536,18 @@
                      */
                     version : function() {
                         return {clientVersion: cversion, parentVersion : pversion};
+                    },
+                    /**
+                     * @description Temporary storage for the signed request. An alternative for users storing SR in
+                     * a global variable.
+                     * @param {Object} s signedrequest to be temporarily stored in Sfdc.canvas.client object.
+                     * @returns {Object} the value previously stored
+                     */
+                    signedrequest : function(s) {
+                        if (arguments.length > 0) {
+                            sr = s;
+                        }
+                        return sr;
                     }
                 };
             }());
@@ -699,7 +716,8 @@
             autogrow : submodules.frame.autogrow,
             subscribe : submodules.event.subscribe,
             unsubscribe : submodules.event.unsubscribe,
-            publish : submodules.event.publish
+            publish : submodules.event.publish,
+            signedrequest : submodules.services.signedrequest
         };
     }());
 
