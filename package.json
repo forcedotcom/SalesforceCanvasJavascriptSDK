@@ -1,0 +1,34 @@
+{
+  "name": "SalesforceCanvasJavascriptSDK",
+  "version": "29.0.0",
+  "description": "A Javascript SDK used to integrate applications with the Force.com Canvas framework",
+  "main": "canvas-all.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "dependencies": {
+    "grunt": "~0.4.1"
+  },
+  "devDependencies": {
+    "grunt-contrib-concat": "~0.3.0",
+    "grunt-contrib-uglify": "~0.2.0",
+    "grunt-contrib-jshint": "~0.4.3",
+    "grunt-jsdoc": "~0.3.2"
+  },
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://git.soma.salesforce.com/khotchkiss/SalesforceCanvasJavascriptSDK.git"
+  },
+  "keywords": [
+    "canvas",
+    "force.com",
+    "js"
+  ],
+  "author": "Force.com Canvas",
+  "license": "BSD",
+  "readmeFilename": "README.md",
+  "gitHead": "86372d2862858be66fe1e416a918b7459c7fedbf"
+}
