@@ -32,6 +32,7 @@
                 // Add the targetModule as Canvas so we are the only ones interested in these events
                 if ($$.isObject(message)) {message.targetModule = "Canvas";}
                 message = sfdcJson.stringify(message);
+                $$.console.log("Sending Post Message ", message);
                 target.postMessage(message, otherWindow);
             }
         }
@@ -53,13 +54,18 @@
 
                         var data, r;
 						var sfdcJson = Sfdc.JSON || JSON;
+
+                        $$.console.log("Post Message Got callback", e);
+
                         if (!$$.isNil(e)) {
                             if (typeof source_origin === 'string' && e.origin !== source_origin) {
+                                $$.console.log("source origin's don't match", e.origin, source_origin);
                                 return false;
                             }
                             if ($$.isFunction(source_origin)) {
                                 r = source_origin(e.origin, e.data);
                                 if (r === false) {
+                                    $$.console.log("source origin's function returning false", e.origin, e.data);
                                     return false;
                                 }
                             }
@@ -71,6 +77,7 @@
                                 }
                                 // If we could parse the data and there is a targetModule make sure it is for us
                                 if (!$$.isNil(data) && ($$.isNil(data.targetModule) || data.targetModule === "Canvas")) {
+                                    $$.console.log("Invoking callback");
                                     callback(data, r);
                                 }
                             }

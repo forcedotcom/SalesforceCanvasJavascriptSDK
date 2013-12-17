@@ -1,6 +1,14 @@
 (function(global) {
-  if(global.Sfdc && global.Sfdc.canvas) {
+  if(global.Sfdc && global.Sfdc.canvas && global.Sfdc.canvas.module) {
     return
+  }
+  var extmodules = {};
+  if(global.Sfdc && global.Sfdc.canvas) {
+    for(var key in global.Sfdc.canvas) {
+      if(global.Sfdc.canvas.hasOwnProperty(key)) {
+        extmodules[key] = global.Sfdc.canvas[key]
+      }
+    }
   }
   var oproto = Object.prototype, aproto = Array.prototype, doc = global.document, $ = {hasOwn:function(obj, prop) {
     return oproto.hasOwnProperty.call(obj, prop)
@@ -229,7 +237,71 @@
     if($.isFunction(cb)) {
       readyHandlers.push(cb)
     }
-  }}, readyHandlers = [], ready = function() {
+  }, console:function() {
+    var enabled = false;
+    if(window && !window.console) {
+      window.console = {}
+    }
+    if(window && !window.console.log) {
+      window.console.log = function() {
+      }
+    }
+    if(window && !window.console.error) {
+      window.console.error = function() {
+      }
+    }
+    function isSessionStorage() {
+      try {
+        return"sessionStorage" in window && window.sessionStorage !== null
+      }catch(e) {
+        return false
+      }
+    }
+    function log() {
+    }
+    function error() {
+    }
+    function activate() {
+      if(Function.prototype.bind) {
+        log = Function.prototype.bind.call(console.log, console);
+        error = Function.prototype.bind.call(console.error, console)
+      }else {
+        log = function() {
+          Function.prototype.apply.call(console.log, console, arguments)
+        };
+        error = function() {
+          Function.prototype.apply.call(console.error, console, arguments)
+        }
+      }
+    }
+    function deactivate() {
+      log = function() {
+      };
+      error = function() {
+      }
+    }
+    function enable() {
+      enabled = true;
+      if(isSessionStorage()) {
+        sessionStorage.setItem("canvas_console", "true")
+      }
+      activate()
+    }
+    function disable() {
+      enabled = false;
+      if(isSessionStorage()) {
+        sessionStorage.setItem("canvas_console", "false")
+      }
+      deactivate()
+    }
+    enabled = isSessionStorage() && sessionStorage.getItem("canvas_console") === "true";
+    if(enabled) {
+      activate()
+    }else {
+      deactivate()
+    }
+    return{enable:enable, disable:disable, log:log, error:error}
+  }()}, readyHandlers = [], ready = function() {
     ready = $.nop;
     $.each(readyHandlers, $.invoker);
     readyHandlers = null
@@ -239,32 +311,81 @@
     }
   };
   (function() {
-    var ael = "addEventListener", tryReady = function() {
-      if(doc && /loaded|complete/.test(doc.readyState)) {
-        ready()
-      }else {
-        if(readyHandlers) {
-          if(!$.isNil(global.setTimeout)) {
-            global.setTimeout(tryReady, 30)
-          }
-        }
+    var called = false, isFrame, fn;
+    function ready() {
+      if(called) {
+        return
       }
-    };
-    if(doc && doc[ael]) {
-      doc[ael]("DOMContentLoaded", ready, false)
+      called = true;
+      ready = $.nop;
+      $.each(readyHandlers, $.invoker);
+      readyHandlers = null
     }
-    tryReady();
-    if(global[ael]) {
-      global[ael]("load", ready, false)
+    function tryScroll() {
+      if(called) {
+        return
+      }
+      try {
+        document.documentElement.doScroll("left");
+        ready()
+      }catch(e) {
+        setTimeout(tryScroll, 30)
+      }
+    }
+    if(document.addEventListener) {
+      document.addEventListener("DOMContentLoaded", ready, false)
     }else {
-      if(global.attachEvent) {
-        global.attachEvent("onload", ready)
+      if(document.attachEvent) {
+        try {
+          isFrame = window.frameElement !== null
+        }catch(e) {
+        }
+        if(document.documentElement.doScroll && !isFrame) {
+          tryScroll()
+        }
+        document.attachEvent("onreadystatechange", function() {
+          if(document.readyState === "complete") {
+            ready()
+          }
+        })
+      }
+    }
+    if(window.addEventListener) {
+      window.addEventListener("load", ready, false)
+    }else {
+      if(window.attachEvent) {
+        window.attachEvent("onload", ready)
+      }else {
+        fn = window.onload;
+        window.onload = function() {
+          if(fn) {
+            fn()
+          }
+          ready()
+        }
       }
     }
   })();
   $.each($, function(fn, name) {
     canvas[name] = fn
   });
+  $.each(extmodules, function(fn, name) {
+    canvas[name] = fn
+  });
+  (function() {
+    var method;
+    var noop = function() {
+    };
+    var methods = ["assert", "clear", "count", "debug", "dir", "dirxml", "error", "exception", "group", "groupCollapsed", "groupEnd", "info", "log", "markTimeline", "profile", "profileEnd", "table", "time", "timeEnd", "timeStamp", "trace", "warn"];
+    var length = methods.length;
+    var console = typeof window !== "undefined" && window.console ? window.console : {};
+    while(length--) {
+      method = methods[length];
+      if(!console[method]) {
+        console[method] = noop
+      }
+    }
+  })();
   if(!global.Sfdc) {
     global.Sfdc = {}
   }
@@ -474,6 +595,7 @@
           message.targetModule = "Canvas"
         }
         message = sfdcJson.stringify(message);
+        $$.console.log("Sending Post Message ", message);
         target.postMessage(message, otherWindow)
       }
     }
@@ -483,13 +605,16 @@
           internalCallback = function(e) {
             var data, r;
             var sfdcJson = Sfdc.JSON || JSON;
+            $$.console.log("Post Message Got callback", e);
             if(!$$.isNil(e)) {
               if(typeof source_origin === "string" && e.origin !== source_origin) {
+                $$.console.log("source origin's don't match", e.origin, source_origin);
                 return false
               }
               if($$.isFunction(source_origin)) {
                 r = source_origin(e.origin, e.data);
                 if(r === false) {
+                  $$.console.log("source origin's function returning false", e.origin, e.data);
                   return false
                 }
               }
@@ -499,6 +624,7 @@
                 }catch(ignore) {
                 }
                 if(!$$.isNil(data) && ($$.isNil(data.targetModule) || data.targetModule === "Canvas")) {
+                  $$.console.log("Invoking callback");
                   callback(data, r)
                 }
               }
@@ -526,7 +652,7 @@
   $$.module("Sfdc.canvas.xd", module)
 })(Sfdc.canvas, this);
 (function($$) {
-  var pversion, cversion = "29.0";
+  var pversion, cversion = "30.0";
   var module = function() {
     var purl;
     function startsWithHttp(u, d) {
@@ -570,6 +696,7 @@
         if($$.isNil(to)) {
           throw"ERROR: targetOrigin was not supplied and was not found on the hash tag, this can result from a redirect or link to another page.";
         }
+        $$.console.log("posting message ", {message:wrapped, to:to});
         $$.xd.post(wrapped, to, parent)
       }
       function validateClient(client, cb) {
@@ -603,11 +730,13 @@
         function findSubscription(event) {
           var s, name = event.name;
           if(name === STR_EVT) {
-            s = subscriptions[name][event.params.topic]
+            if(!$$.isNil(subscriptions[name])) {
+              s = subscriptions[name][event.params.topic]
+            }
           }else {
             s = subscriptions[name]
           }
-          if(!$$.isNil(s) && $$.isFunction(s.onData)) {
+          if(!$$.isNil(s) && ($$.isFunction(s.onData) || $$.isFunction(s.onComplete))) {
             return s
           }
           return null

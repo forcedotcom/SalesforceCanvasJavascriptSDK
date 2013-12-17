@@ -31,7 +31,7 @@
 
     "use strict";
 
-    var pversion, cversion = "29.0";
+    var pversion, cversion = "30.0";
 
     var module =   (function() /**@lends module */ {
 
@@ -91,6 +91,7 @@
                 if ($$.isNil(to)) {
                     throw "ERROR: targetOrigin was not supplied and was not found on the hash tag, this can result from a redirect or link to another page.";
                 }
+                $$.console.log("posting message ", {message : wrapped, to : to});
                 $$.xd.post(wrapped, to, parent);
             }
 
@@ -137,12 +138,14 @@
                     var s, name = event.name;
 
                     if (name === STR_EVT) {
-                        s = subscriptions[name][event.params.topic];
+                        if (!$$.isNil(subscriptions[name])) {
+                            s = subscriptions[name][event.params.topic];
+                        }
                     } else {
                         s = subscriptions[name];
                     }
 
-                    if (!$$.isNil(s) && $$.isFunction(s.onData)) {
+                    if (!$$.isNil(s) && ($$.isFunction(s.onData) || $$.isFunction(s.onComplete))) {
                         return s;
                     }
 
