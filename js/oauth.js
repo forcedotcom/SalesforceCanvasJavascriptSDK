@@ -1,30 +1,5 @@
 
 /**
-* Copyright (c) 2011, salesforce.com, inc.
-* All rights reserved.
-*
-* Redistribution and use in source and binary forms, with or without modification, are permitted provided
-* that the following conditions are met:
-*
-* Redistributions of source code must retain the above copyright notice, this list of conditions and the
-* following disclaimer.
-*
-* Redistributions in binary form must reproduce the above copyright notice, this list of conditions and
-* the following disclaimer in the documentation and/or other materials provided with the distribution.
-*
-* Neither the name of salesforce.com, inc. nor the names of its contributors may be used to endorse or
-* promote products derived from this software without specific prior written permission.
-*
-* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED
-* WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
-* PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
-* ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
-* TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-* HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-* NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-* POSSIBILITY OF SUCH DAMAGE.
-*/
-/**
  *@namespace Sfdc.canvas.oauth
  *@name Sfdc.canvas.oauth
  */
@@ -112,10 +87,10 @@
          * @function
          * @description Sets, gets, or removes the <code>access_token</code> from this JavaScript object. <br>
          <p>This function does one of three things: <br>
-                1) If the 't' parameter isn't passed in, the current value for the <code>access_token</code> value is returned. <br>
-                2) If the the 't' parameter is null, the <code>access_token</code> value is removed. <br>
-                3) Otherwise the <code>access_token</code>  value is set to the 't' parameter and then returned.<br><br>
-                Note: for longer-term storage of the OAuth token, store it server-side in the session.  Access tokens
+         	1) If the 't' parameter isn't passed in, the current value for the <code>access_token</code> value is returned. <br>
+         	2) If the the 't' parameter is null, the <code>access_token</code> value is removed. <br>
+         	3) Otherwise the <code>access_token</code>  value is set to the 't' parameter and then returned.<br><br>
+         	Note: for longer-term storage of the OAuth token, store it server-side in the session.  Access tokens
              should never be stored in cookies.
          * @param {String} [t] The OAuth token to set as the <code>access_token</code> value
          * @returns {String} The resulting <code>access_token</code> value if set; otherwise null
