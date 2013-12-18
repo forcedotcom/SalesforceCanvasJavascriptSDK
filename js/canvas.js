@@ -691,16 +691,10 @@
 
         readyHandlers = [],
 
-        ready = function () {
-            ready = $.nop;
-            $.each(readyHandlers, $.invoker);
-            readyHandlers = null;
-        },
-
-       /**
-        * @description 
-        * @param {Function} cb The function to run when ready.
-        */
+        /**
+         * @description
+         * @param {Function} cb The function to run when ready.
+         */
         canvas = function (cb) {
             if ($.isFunction(cb)) {
                 readyHandlers.push(cb);
@@ -721,7 +715,7 @@
                 called = true;
                 ready = $.nop;
                 $.each(readyHandlers, $.invoker);
-                readyHandlers = null;
+                readyHandlers = [];
             }
 
             function tryScroll(){
@@ -739,7 +733,7 @@
             } else if ( document.attachEvent ) {  // IE
 
                 try {
-                    isFrame = window.frameElement !== null;
+                    isFrame = self !== top;
                 } catch(e) {}
 
                 // IE, the document is not inside a frame
