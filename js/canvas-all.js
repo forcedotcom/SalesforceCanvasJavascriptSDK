@@ -301,11 +301,7 @@
       deactivate()
     }
     return{enable:enable, disable:disable, log:log, error:error}
-  }()}, readyHandlers = [], ready = function() {
-    ready = $.nop;
-    $.each(readyHandlers, $.invoker);
-    readyHandlers = null
-  }, canvas = function(cb) {
+  }()}, readyHandlers = [], canvas = function(cb) {
     if($.isFunction(cb)) {
       readyHandlers.push(cb)
     }
@@ -319,7 +315,7 @@
       called = true;
       ready = $.nop;
       $.each(readyHandlers, $.invoker);
-      readyHandlers = null
+      readyHandlers = []
     }
     function tryScroll() {
       if(called) {
@@ -337,7 +333,7 @@
     }else {
       if(document.attachEvent) {
         try {
-          isFrame = window.frameElement !== null
+          isFrame = self !== top
         }catch(e) {
         }
         if(document.documentElement.doScroll && !isFrame) {
