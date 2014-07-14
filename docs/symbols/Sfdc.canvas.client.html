@@ -302,9 +302,36 @@ adjusts the frame accordingly.</div>
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/Sfdc.canvas.client.html#refreshSignedRequest">refreshSignedRequest</a></b>(clientscb)
+								</div>
+								<div class="description">Refresh the signed request.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/Sfdc.canvas.client.html#repost">repost</a></b>(refresh)
+								</div>
+								<div class="description">Repost the signed request.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/Sfdc.canvas.client.html#resize">resize</a></b>(client, size)
 								</div>
 								<div class="description">Informs the parent window to resize the canvas iFrame.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/Sfdc.canvas.client.html#signedrequest">signedrequest</a></b>(s)
+								</div>
+								<div class="description">Temporary storage for the signed request.</div>
 							</td>
 						</tr>
 					
@@ -329,9 +356,27 @@ adjusts the frame accordingly.</div>
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/Sfdc.canvas.client.html#token">token</a></b>(t)
+								</div>
+								<div class="description">Stores or gets the oauth token in a local javascript variable.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/Sfdc.canvas.client.html#unsubscribe">unsubscribe</a></b>(client, s)
 								</div>
 								<div class="description">Unsubscribes from parent or custom events.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/Sfdc.canvas.client.html#version">version</a></b>()
+								</div>
+								<div class="description">Returns the current version of the client.</div>
 							</td>
 						</tr>
 					
@@ -702,6 +747,98 @@ Sfdc.canvas(function() {
 
 					<hr />
 				
+					<a name="refreshSignedRequest"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>refreshSignedRequest</b>(clientscb)
+					
+					</div>
+					<div class="description">
+						Refresh the signed request. Obtain a new signed request on demand. Note the
+authentication mechanism of the canvas app must be set to SignedRequest and not OAuth.
+						
+						
+					</div>
+					
+					
+					
+					<pre class="code">// Gets a signed request on demand.
+ Sfdc.canvas.client.refreshSignedRequest(function(data) {
+     if (data.status === 200) {
+         var signedRequest =  data.payload.response;
+         var part = signedRequest.split('.')[1];
+         var obj = JSON.parse(Sfdc.canvas.decode(part));
+     }
+  }</pre>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Function}</span> <b>clientscb</b>
+									
+								</dt>
+								<dd>The client's callback function to receive the base64 encoded signed request.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="repost"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>repost</b>(refresh)
+					
+					</div>
+					<div class="description">
+						Repost the signed request. Instruct the parent window to initiate a new post to the
+canvas url. Note the authentication mechanism of the canvas app must be set to SignedRequest and not OAuth.
+						
+						
+					</div>
+					
+					
+					
+					<pre class="code">// Gets a signed request on demand, without refreshing the signed request.
+ Sfdc.canvas.client.repost();
+// Gets a signed request on demand, first by refreshing the signed request.
+ Sfdc.canvas.client.repost({refresh : true});</pre>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Boolean}</span> <b>refresh</b>
+									<i>Optional, Default: false</i>
+								</dt>
+								<dd>Refreshes the signed request when set to true.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
 					<a name="resize"> </a>
 					<div class="fixedFont">
 					
@@ -761,6 +898,50 @@ Sfdc.canvas(function() {
 						
 						
 						
+						
+						
+						
+
+					<hr />
+				
+					<a name="signedrequest"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{Object}</span>
+					<b>signedrequest</b>(s)
+					
+					</div>
+					<div class="description">
+						Temporary storage for the signed request. An alternative for users storing SR in
+a global variable. Note: if you would like a new signed request take a look at refreshSignedRequest().
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>s</b>
+									
+								</dt>
+								<dd>signedrequest to be temporarily stored in Sfdc.canvas.client object.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Object}</span> the value previously stored</dd>
+							
+							</dl>
 						
 						
 						
@@ -912,6 +1093,50 @@ Sfdc.canvas(function() {
 
 					<hr />
 				
+					<a name="token"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{Object}</span>
+					<b>token</b>(t)
+					
+					</div>
+					<div class="description">
+						Stores or gets the oauth token in a local javascript variable. Note, if longer term
+(survive page refresh) storage is needed store the oauth token on the server side.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>t</b>
+									
+								</dt>
+								<dd>oauth token, if supplied it will be stored in a volatile local JS variable.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Object}</span> the oauth token.</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
 					<a name="unsubscribe"> </a>
 					<div class="fixedFont">
 					
@@ -980,6 +1205,38 @@ Sfdc.canvas(function() {
 						
 						
 
+					<hr />
+				
+					<a name="version"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{Object}</span>
+					<b>version</b>()
+					
+					</div>
+					<div class="description">
+						Returns the current version of the client.
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Object}</span> {clientVersion : "29.0", parentVersion : "29.0"}.</dd>
+							
+							</dl>
+						
+						
+						
+
 					
 				
 			
@@ -994,7 +1251,7 @@ Sfdc.canvas(function() {
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Fri Feb 07 2014 13:06:46 GMT-0800 (PST)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Mon Jul 14 2014 16:34:34 GMT-0700 (PDT)
 		</div>
 	</body>
 </html>

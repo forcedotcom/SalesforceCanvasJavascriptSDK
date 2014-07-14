@@ -33,6 +33,39 @@
 
     "use strict";
 
+    var storage = (function() {
+
+        function isLocalStorage() {
+            try {
+                return 'sessionStorage' in window && window.sessionStorage !== null;
+            } catch (e) {
+                return false;
+            }
+        }
+
+        return {
+            get : function get(key) {
+                if (isLocalStorage()) {
+                    return sessionStorage.getItem(key);
+                }
+                return $$.cookies.get(key);
+            },
+            set : function set(key, value) {
+                if (isLocalStorage()) {
+                    return sessionStorage.setItem(key, value);
+                }
+                return $$.cookies.set(key, value);
+            },
+            remove : function remove(key) {
+                if (isLocalStorage()) {
+                    return sessionStorage.removeItem(key);
+                }
+                return $$.cookies.remove(key);
+            }
+        };
+
+    }());
+
     var module =   (function() {
 
         var accessToken,
@@ -42,10 +75,10 @@
             childWindow;
 
         function init() {
-            // Get the access token from the cookie (needed to survive refresh),
+            // Get the access token from the sessionStorage or cookie (needed to survive refresh),
             // and then remove the cookie per security's request.
-            accessToken = $$.cookies.get("access_token");
-            $$.cookies.remove("access_token");
+            accessToken = storage.get("access_token");
+            storage.remove("access_token");
         }
 
         function query(params) {
@@ -65,9 +98,9 @@
          *@private
          */
         function refresh() {
-            // Temporarily set the oauth token in a cookie and then remove it
+            // Temporarily set the oauth token in a sessionStorage or cookie and then remove it
             // after the refresh.
-            $$.cookies.set("access_token", accessToken);
+            storage.set("access_token", accessToken);
             self.location.reload();
         }
         /**
@@ -104,6 +137,8 @@
             ctx.params = ctx.params || {state : ""};
             ctx.params.state = ctx.params.state || ctx.callback || window.location.pathname;  // @TODO REVIEW THIS
             ctx.params.display= ctx.params.display || 'popup';
+            ctx.params.redirect_uri = $$.startsWithHttp(ctx.params.redirect_uri, 
+                    encodeURIComponent(window.location.protocol + "//" + window.location.hostname + ":" + window.location.port) + ctx.params.redirect_uri);
             uri = uri + query(ctx.params);
             childWindow = window.open(uri, 'OAuth', 'status=0,toolbar=0,menubar=0,resizable=0,scrollbars=1,top=50,left=50,height=500,width=680');
         }
@@ -146,14 +181,14 @@
         function instanceUrl(i) {
             if (arguments.length === 0) {
                 if (!$$.isNil(instUrl)) {return instUrl;}
-                instUrl = $$.cookies.get("instance_url");
+                instUrl = storage.get("instance_url");
             }
             else if (i === null) {
-                $$.cookies.remove("instance_url");
+                storage.remove("instance_url");
                 instUrl = null;
             }
             else {
-                $$.cookies.set("instance_url", i);
+                storage.set("instance_url", i);
                 instUrl = i;
             }
             return instUrl;
@@ -201,7 +236,8 @@
         /**
          * @name Sfdc.canvas.oauth#checkChildWindowStatus
          * @function
-         * @description Refreshes the parent window only if the child window is closed.
+         * @description Refreshes the parent window only if the child window is closed. This
+         * method is no longer used. Leaving in for backwards compatability.
          */
         function checkChildWindowStatus() {
             if (!childWindow || childWindow.closed) {
@@ -225,9 +261,23 @@
             // raised because user closed child window, or because user is playing with F5 key.
             // NOTE: We can not trust on "onUnload" event of child window, because if user reload or refresh
             // such window in fact he is not closing child. (However "onUnload" event is raised!)
-            //checkChildWindowStatus();
+
+            var retry = 0, maxretries = 10;
+
+            // Internal check child window status with max retry logic
+            function cws() {
+
+                retry++;
+                if (!childWindow || childWindow.closed) {
+                    refresh();
+                }
+                else if (retry < maxretries) {
+                    setTimeout(cws, 50);
+                }
+            }
+
             parseHash(hash);
-            setTimeout(window.Sfdc.canvas.oauth.checkChildWindowStatus, 50);
+            setTimeout(cws, 50);
         }
 
         /**
@@ -238,9 +288,6 @@
         function logout() {
             // Remove the oauth token and refresh the browser
             token(null);
-            // @todo: do we want to do this?
-            //var home = $$.cookies.get("home");
-            //window.location = home || window.location;
         }
 
         /**
