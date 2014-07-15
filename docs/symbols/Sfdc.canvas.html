@@ -306,6 +306,15 @@ ul.inheritsList
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
+								<div class="fixedFont">Sfdc.canvas.<b><a href="../symbols/Sfdc.canvas.html#.decode">decode</a></b>(str)
+								</div>
+								<div class="description">decode a base 64 string.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
 								<div class="fixedFont">Sfdc.canvas.<b><a href="../symbols/Sfdc.canvas.html#.each">each</a></b>(obj, it, ctx)
 								</div>
 								<div class="description">Calls a defined function for each element in an object.</div>
@@ -382,6 +391,16 @@ ul.inheritsList
 								<div class="fixedFont">Sfdc.canvas.<b><a href="../symbols/Sfdc.canvas.html#.isArray">isArray</a></b>(value)
 								</div>
 								<div class="description">Checks whether an object is an array.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">Sfdc.canvas.<b><a href="../symbols/Sfdc.canvas.html#.isEmpty">isEmpty</a></b>(obj)
+								</div>
+								<div class="description">Returns true if the object is null, or the object has no 
+enumerable properties/attributes.</div>
 							</td>
 						</tr>
 					
@@ -536,6 +555,16 @@ ul.inheritsList
 								<div class="fixedFont">Sfdc.canvas.<b><a href="../symbols/Sfdc.canvas.html#.slice">slice</a></b>(array, begin, end)
 								</div>
 								<div class="description">Creates a new array containing the selected elements of the given array.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">Sfdc.canvas.<b><a href="../symbols/Sfdc.canvas.html#.startsWithHttp">startsWithHttp</a></b>(orig, newUrl)
+								</div>
+								<div class="description">Convenience method to prepend a method with a fully qualified url, if the
+method does not begin with http protocol.</div>
 							</td>
 						</tr>
 					
@@ -794,6 +823,49 @@ ul.inheritsList
 							<dt class="heading">Returns:</dt>
 							
 								<dd><span class="light fixedFont">{DOMElement}</span> The DOM element with the given ID.  Returns null if the element doesn't exist.</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name=".decode"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">Sfdc.canvas.</span><b>decode</b>(str)
+					
+					</div>
+					<div class="description">
+						decode a base 64 string.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>str</b>
+									
+								</dt>
+								<dd>- base64 encoded string</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd>decoded string</dd>
 							
 							</dl>
 						
@@ -1215,6 +1287,51 @@ ul.inheritsList
 
 					<hr />
 				
+					<a name=".isEmpty"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					<span class="light">{Boolean}</span>
+					<span class="light">Sfdc.canvas.</span><b>isEmpty</b>(obj)
+					
+					</div>
+					<div class="description">
+						Returns true if the object is null, or the object has no 
+enumerable properties/attributes.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>obj</b>
+									
+								</dt>
+								<dd>The object to check</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Boolean}</span> <code>true</code> if the object or value is null, or is an object with
+no enumerable properties/attributes.</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
 					<a name=".isFunction"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
@@ -1614,8 +1731,6 @@ ul.inheritsList
 					</div>
 					<div class="description">
 						Converts a query string into an object.
-Note: this doesn't handle multi-value parameters.  For instance,
-passing in <code>?param=value1&​param=value2</code> will not return <code>['value1', 'value2']</code>
 						
 						
 					</div>
@@ -1630,7 +1745,7 @@ passing in <code>?param=value1&​param=value2</code> will not return <code>['va
 									<span class="light fixedFont">{String}</span> <b>q</b>
 									
 								</dt>
-								<dd>?param1=value1&amp;param2=value2</dd>
+								<dd>param1=value1&amp;param1=value2&amp;param2=value2</dd>
 							
 							</dl>
 						
@@ -1641,7 +1756,7 @@ passing in <code>?param=value1&​param=value2</code> will not return <code>['va
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd><span class="light fixedFont">{Object}</span> {param1 : 'value1', param2 : 'value2'}</dd>
+								<dd><span class="light fixedFont">{Object}</span> {param1 : ['value1', 'value2'], param2 : 'value2'}</dd>
 							
 							</dl>
 						
@@ -1967,6 +2082,56 @@ passing in <code>?param=value1&​param=value2</code> will not return <code>['va
 
 					<hr />
 				
+					<a name=".startsWithHttp"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					<span class="light">{String}</span>
+					<span class="light">Sfdc.canvas.</span><b>startsWithHttp</b>(orig, newUrl)
+					
+					</div>
+					<div class="description">
+						Convenience method to prepend a method with a fully qualified url, if the
+method does not begin with http protocol.
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>orig</b>
+									
+								</dt>
+								<dd>The original url to check</dd>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>newUrl</b>
+									
+								</dt>
+								<dd>The new url to use if it does not begin with http(s) protocol.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{String}</span> orig if the url begins with http, or newUrl if it does not.</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
 					<a name=".stripUrl"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
@@ -2157,7 +2322,7 @@ passing in <code>?param=value1&​param=value2</code> will not return <code>['va
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Fri Feb 07 2014 13:06:46 GMT-0800 (PST)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Tue Jul 15 2014 10:41:53 GMT-0700 (PDT)
 		</div>
 	</body>
 </html>
