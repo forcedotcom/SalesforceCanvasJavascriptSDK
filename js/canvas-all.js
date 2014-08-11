@@ -23,7 +23,6 @@
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 */
-
 (function(global) {
   if(global.Sfdc && global.Sfdc.canvas && global.Sfdc.canvas.module) {
     return
@@ -258,7 +257,27 @@
       chr1 = chr2 = chr3 = "";
       enc1 = enc2 = enc3 = enc4 = ""
     }while(i < str.length);
-    return output.join("")
+    return $.escapeToUTF8(output.join(""))
+  }, escapeToUTF8:function(str) {
+    var outStr = "";
+    var i = 0;
+    while(i < str.length) {
+      var c = str.charCodeAt(i++);
+      var c1;
+      if(c < 128) {
+        outStr += String.fromCharCode(c)
+      }else {
+        if(c > 191 && c < 224) {
+          c1 = str.charCodeAt(i++);
+          outStr += String.fromCharCode((c & 31) << 6 | c1 & 63)
+        }else {
+          c1 = str.charCodeAt(i++);
+          var c2 = str.charCodeAt(i++);
+          outStr += String.fromCharCode((c & 15) << 12 | (c1 & 63) << 6 | c2 & 63)
+        }
+      }
+    }
+    return outStr
   }, validEventName:function(name, res) {
     var ns, parts = name.split(/\./), regex = /^[$A-Z_][0-9A-Z_$]*$/i, reserved = {"sfdc":true, "canvas":true, "force":true, "salesforce":true, "chatter":true};
     $.each($.isArray(res) ? res : [res], function(v) {
@@ -513,11 +532,36 @@
   $$.module("Sfdc.canvas.cookies", module)
 })(Sfdc.canvas);
 (function($$) {
+  var storage = function() {
+    function isLocalStorage() {
+      try {
+        return"sessionStorage" in window && window.sessionStorage !== null
+      }catch(e) {
+        return false
+      }
+    }
+    return{get:function get(key) {
+      if(isLocalStorage()) {
+        return sessionStorage.getItem(key)
+      }
+      return $$.cookies.get(key)
+    }, set:function set(key, value) {
+      if(isLocalStorage()) {
+        return sessionStorage.setItem(key, value)
+      }
+      return $$.cookies.set(key, value)
+    }, remove:function remove(key) {
+      if(isLocalStorage()) {
+        return sessionStorage.removeItem(key)
+      }
+      return $$.cookies.remove(key)
+    }}
+  }();
   var module = function() {
     var accessToken, instUrl, instId, tOrigin, childWindow;
     function init() {
-      accessToken = $$.cookies.get("access_token");
-      $$.cookies.remove("access_token")
+      accessToken = storage.get("access_token");
+      storage.remove("access_token")
     }
     function query(params) {
       var r = [], n;
@@ -532,7 +576,7 @@
       return""
     }
     function refresh() {
-      $$.cookies.set("access_token", accessToken);
+      storage.set("access_token", accessToken);
       self.location.reload()
     }
     function login(ctx) {
@@ -561,13 +605,13 @@
         if(!$$.isNil(instUrl)) {
           return instUrl
         }
-        instUrl = $$.cookies.get("instance_url")
+        instUrl = storage.get("instance_url")
       }else {
         if(i === null) {
-          $$.cookies.remove("instance_url");
+          storage.remove("instance_url");
           instUrl = null
         }else {
-          $$.cookies.set("instance_url", i);
+          storage.set("instance_url", i);
           instUrl = i
         }
       }
@@ -608,8 +652,19 @@
       }
     }
     function childWindowUnloadNotification(hash) {
+      var retry = 0, maxretries = 10;
+      function cws() {
+        retry++;
+        if(!childWindow || childWindow.closed) {
+          refresh()
+        }else {
+          if(retry < maxretries) {
+            setTimeout(cws, 50)
+          }
+        }
+      }
       parseHash(hash);
-      setTimeout(window.Sfdc.canvas.oauth.checkChildWindowStatus, 50)
+      setTimeout(cws, 50)
     }
     function logout() {
       token(null)

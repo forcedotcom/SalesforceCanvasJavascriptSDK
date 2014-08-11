@@ -23,7 +23,6 @@
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 */
-
 /*jslint bitwise:false */
 (function (global) {
 
@@ -533,8 +532,32 @@
                     chr1 = chr2 = chr3 = "";
                     enc1 = enc2 = enc3 = enc4 = "";
                 } while (i < str.length);
-                return output.join('');
+                return $.escapeToUTF8(output.join(''));
             },
+            
+    		escapeToUTF8: function(str) {
+    			var outStr = "";
+    			var i = 0;
+
+    			while (i < str.length) {
+
+    				var c = str.charCodeAt(i++);
+    				var c1;
+
+    				if (c < 128) {
+    					outStr += String.fromCharCode(c);
+    				} else if (c > 191 && c < 224) {
+    					c1 = str.charCodeAt(i++);
+    					outStr += String.fromCharCode((c & 31) << 6 | c1 & 63);
+    				} else {
+    					c1 = str.charCodeAt(i++);
+    					var c2 = str.charCodeAt(i++);
+    					outStr += String.fromCharCode(
+    							(c & 15) << 12 | (c1 & 63) << 6 | c2 & 63);
+    				}
+    			}
+    			return outStr;
+    		},
 
 
             // Events
