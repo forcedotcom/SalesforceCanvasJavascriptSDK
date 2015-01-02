@@ -17,6 +17,18 @@ Currently, we provide Java and Ruby examples, but you can develop in whatever la
 
 	git clone git@github.com:forcedotcom/SalesforceCanvasJavascriptSDK.git
 
+### How to install the SDK (using _bower_)
+
+```shell
+bower install salesforce-canvas-js-sdk
+```
+
+Then add a `<script>` to your `index.html`:
+
+```html
+<script src="/bower_components/salesforce-canvas-js-sdk/js/canvas-all.js">
+```
+
 ### How to use the Canvas JavaScript SDK
 To use this SDK, simply include the canvas-all.js file in your page.
 
