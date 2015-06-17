@@ -1,28 +1,3 @@
-/**
-* Copyright (c) 2014, salesforce.com, inc.
-* All rights reserved.
-*
-* Redistribution and use in source and binary forms, with or without modification, are permitted provided
-* that the following conditions are met:
-*
-* Redistributions of source code must retain the above copyright notice, this list of conditions and the
-* following disclaimer.
-*
-* Redistributions in binary form must reproduce the above copyright notice, this list of conditions and
-* the following disclaimer in the documentation and/or other materials provided with the distribution.
-*
-* Neither the name of salesforce.com, inc. nor the names of its contributors may be used to endorse or
-* promote products derived from this software without specific prior written permission.
-*
-* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED
-* WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
-* PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
-* ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
-* TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-* HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-* NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-* POSSIBILITY OF SUCH DAMAGE.
-*/
 (function(global) {
   if(global.Sfdc && global.Sfdc.canvas && global.Sfdc.canvas.module) {
     return
@@ -257,27 +232,7 @@
       chr1 = chr2 = chr3 = "";
       enc1 = enc2 = enc3 = enc4 = ""
     }while(i < str.length);
-    return $.escapeToUTF8(output.join(""))
-  }, escapeToUTF8:function(str) {
-    var outStr = "";
-    var i = 0;
-    while(i < str.length) {
-      var c = str.charCodeAt(i++);
-      var c1;
-      if(c < 128) {
-        outStr += String.fromCharCode(c)
-      }else {
-        if(c > 191 && c < 224) {
-          c1 = str.charCodeAt(i++);
-          outStr += String.fromCharCode((c & 31) << 6 | c1 & 63)
-        }else {
-          c1 = str.charCodeAt(i++);
-          var c2 = str.charCodeAt(i++);
-          outStr += String.fromCharCode((c & 15) << 12 | (c1 & 63) << 6 | c2 & 63)
-        }
-      }
-    }
-    return outStr
+    return output.join("")
   }, validEventName:function(name, res) {
     var ns, parts = name.split(/\./), regex = /^[$A-Z_][0-9A-Z_$]*$/i, reserved = {"sfdc":true, "canvas":true, "force":true, "salesforce":true, "chatter":true};
     $.each($.isArray(res) ? res : [res], function(v) {
@@ -788,7 +743,7 @@
   $$.module("Sfdc.canvas.xd", module)
 })(Sfdc.canvas, this);
 (function($$) {
-  var pversion, cversion = "31.0";
+  var pversion, cversion = "32.0";
   var module = function() {
     var purl;
     function getTargetOrigin(to) {
