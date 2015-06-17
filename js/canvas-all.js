@@ -10,7 +10,7 @@
       }
     }
   }
-  var oproto = Object.prototype, aproto = Array.prototype, doc = global.document, keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/\x3d", $ = {hasOwn:function(obj, prop) {
+  var oproto = Object.prototype, aproto = Array.prototype, doc = global.document, keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=", $ = {hasOwn:function(obj, prop) {
     return oproto.hasOwnProperty.call(obj, prop)
   }, isUndefined:function(value) {
     var undef;
@@ -144,9 +144,9 @@
         })
       }else {
         if(encode) {
-          s[s.length] = encodeURIComponent(key) + "\x3d" + encodeURIComponent(value)
+          s[s.length] = encodeURIComponent(key) + "=" + encodeURIComponent(value)
         }else {
-          s[s.length] = key + "\x3d" + value
+          s[s.length] = key + "=" + value
         }
       }
     }
@@ -161,7 +161,7 @@
         }
       }
     }
-    return s.join("\x26").replace(/%20/g, "+")
+    return s.join("&").replace(/%20/g, "+")
   }, objectify:function(q) {
     var arr, obj = {}, i, p, n, v, e;
     if($.isNil(q)) {
@@ -170,9 +170,9 @@
     if(q.substring(0, 1) == "?") {
       q = q.substring(1)
     }
-    arr = q.split("\x26");
+    arr = q.split("&");
     for(i = 0;i < arr.length;i += 1) {
-      p = arr[i].split("\x3d");
+      p = arr[i].split("=");
       n = p[0];
       v = p[1];
       e = obj[n];
@@ -196,7 +196,7 @@
       return url
     }
     url = url.replace(/#.*$/, "");
-    url += /^\#/.test(q) ? q : (/\?/.test(url) ? "\x26" : "?") + q;
+    url += /^\#/.test(q) ? q : (/\?/.test(url) ? "&" : "?") + q;
     return url
   }, extend:function(dest) {
     $.each($.slice(arguments, 1), function(mixin, i) {
@@ -476,18 +476,18 @@
       if(days) {
         date = new Date;
         date.setTime(date.getTime() + days * 24 * 60 * 60 * 1E3);
-        expires = "; expires\x3d" + date.toGMTString()
+        expires = "; expires=" + date.toGMTString()
       }else {
         expires = ""
       }
-      document.cookie = name + "\x3d" + value + expires + "; path\x3d/" + (isSecure() === true ? "; secure" : "")
+      document.cookie = name + "=" + value + expires + "; path=/" + (isSecure() === true ? "; secure" : "")
     }
     function get(name) {
       var nameEQ, ca, c, i;
       if($$.isUndefined(name)) {
         return document.cookie.split(";")
       }
-      nameEQ = name + "\x3d";
+      nameEQ = name + "=";
       ca = document.cookie.split(";");
       for(i = 0;i < ca.length;i += 1) {
         c = ca[i];
@@ -544,10 +544,10 @@
       if(!$$.isUndefined(params)) {
         for(n in params) {
           if(params.hasOwnProperty(n)) {
-            r.push(n + "\x3d" + params[n])
+            r.push(n + "=" + params[n])
           }
         }
-        return"?" + r.join("\x26")
+        return"?" + r.join("&")
       }
       return""
     }
@@ -564,7 +564,7 @@
       ctx.params.display = ctx.params.display || "popup";
       ctx.params.redirect_uri = $$.startsWithHttp(ctx.params.redirect_uri, encodeURIComponent(window.location.protocol + "//" + window.location.hostname + ":" + window.location.port) + ctx.params.redirect_uri);
       uri = uri + query(ctx.params);
-      childWindow = window.open(uri, "OAuth", "status\x3d0,toolbar\x3d0,menubar\x3d0,resizable\x3d0,scrollbars\x3d1,top\x3d50,left\x3d50,height\x3d500,width\x3d680")
+      childWindow = window.open(uri, "OAuth", "status=0,toolbar=0,menubar=0,resizable=0,scrollbars=1,top=50,left=50,height=500,width=680")
     }
     function token(t) {
       if(arguments.length === 0) {
@@ -599,9 +599,9 @@
         if(hash.indexOf("#") === 0) {
           hash = hash.substr(1)
         }
-        nvp = hash.split("\x26");
+        nvp = hash.split("&");
         for(i = 0;i < nvp.length;i += 1) {
-          nv = nvp[i].split("\x3d");
+          nv = nvp[i].split("=");
           n = nv[0];
           v = decodeURIComponent(nv[1]);
           if("access_token" === n) {
@@ -652,9 +652,9 @@
       var i, nvs, nv, q = self.location.search;
       if(q) {
         q = q.substring(1);
-        nvs = q.split("\x26");
+        nvs = q.split("&");
         for(i = 0;i < nvs.length;i += 1) {
-          nv = nvs[i].split("\x3d");
+          nv = nvs[i].split("=");
           if("loginUrl" === nv[0]) {
             return decodeURIComponent(nv[1]) + "/services/oauth2/authorize"
           }
@@ -764,7 +764,7 @@
   $$.module("Sfdc.canvas.xd", module)
 })(Sfdc.canvas, this);
 (function($$) {
-  var pversion, cversion = "33.0";
+  var pversion, cversion = "34.0";
   var module = function() {
     var purl;
     function getTargetOrigin(to) {
@@ -1040,3 +1040,4 @@
   }();
   $$.module("Sfdc.canvas.client", module)
 })(Sfdc.canvas);
+

@@ -1,28 +1,28 @@
 /**
-* Copyright (c) 2011, salesforce.com, inc.
-* All rights reserved.
-*
-* Redistribution and use in source and binary forms, with or without modification, are permitted provided
-* that the following conditions are met:
-*
-* Redistributions of source code must retain the above copyright notice, this list of conditions and the
-* following disclaimer.
-*
-* Redistributions in binary form must reproduce the above copyright notice, this list of conditions and
-* the following disclaimer in the documentation and/or other materials provided with the distribution.
-*
-* Neither the name of salesforce.com, inc. nor the names of its contributors may be used to endorse or
-* promote products derived from this software without specific prior written permission.
-*
-* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED
-* WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
-* PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
-* ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
-* TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-* HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-* NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-* POSSIBILITY OF SUCH DAMAGE.
-*/
+ * Copyright (c) 2011, salesforce.com, inc.
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without modification, are permitted provided
+ * that the following conditions are met:
+ *
+ *    Redistributions of source code must retain the above copyright notice, this list of conditions and the
+ *    following disclaimer.
+ *
+ *    Redistributions in binary form must reproduce the above copyright notice, this list of conditions and
+ *    the following disclaimer in the documentation and/or other materials provided with the distribution.
+ *
+ *    Neither the name of salesforce.com, inc. nor the names of its contributors may be used to endorse or
+ *    promote products derived from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+ * PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ * TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ */
 /**
  *@namespace Sfdc.canvas.client
  *@name Sfdc.canvas.client
@@ -31,15 +31,11 @@
 
     "use strict";
 
-    var pversion, cversion = "33.0";
+    var pversion, cversion = "34.0";
 
     var module =   (function() /**@lends module */ {
 
         var purl;
-
-        function startsWithHttp(u, d) {
-            return  $$.isNil(u) ? u : (u.substring(0, 4) === "http") ? u : d;
-        }
 
         // returns the url of the Parent Window
         function getTargetOrigin(to) {
@@ -47,14 +43,14 @@
             if (to === "*") {return to;}
             if (!$$.isNil(to)) {
                 h = $$.stripUrl(to);
-                purl = startsWithHttp(h, purl);
+                purl = $$.startsWithHttp(h, purl);
                 if (purl) {return purl;}
             }
             // This relies on the parent passing it in. This may not be there as the client can do a redirect.
             h = $$.document().location.hash;
             if (h) {
                 h = decodeURIComponent(h.replace(/^#/, ''));
-                purl = startsWithHttp(h, purl);
+                purl = $$.startsWithHttp(h, purl);
             }
             return purl;
         }
@@ -492,7 +488,7 @@
                         }
                         else {
                             // We need to set this here so we can validate the origin when we receive the call back
-                            purl = startsWithHttp(config.targetOrigin, purl);
+                            purl = $$.startsWithHttp(config.targetOrigin, purl);
                         }
                         postit(ccb, {type : "ajax", url : url, config : config});
                     },
@@ -525,6 +521,9 @@
                         }
                     },
                     /**
+                     * @public
+                     * @function
+                     * @name Sfdc.canvas.client#token
                      * @description Stores or gets the oauth token in a local javascript variable. Note, if longer term
                      * (survive page refresh) storage is needed store the oauth token on the server side.
                      * @param {String} t oauth token, if supplied it will be stored in a volatile local JS variable.
@@ -535,14 +534,20 @@
                     },
                     /**
                      * @description Returns the current version of the client.
+                     * @public
+                     * @function
+                     * @name Sfdc.canvas.client#version
                      * @returns {Object} {clientVersion : "29.0", parentVersion : "29.0"}.
                      */
                     version : function() {
                         return {clientVersion: cversion, parentVersion : pversion};
                     },
                     /**
+                     * @function
+                     * @public
+                     * @name Sfdc.canvas.client#signedrequest
                      * @description Temporary storage for the signed request. An alternative for users storing SR in
-                     * a global variable.
+                     * a global variable. Note: if you would like a new signed request take a look at refreshSignedRequest().
                      * @param {Object} s signedrequest to be temporarily stored in Sfdc.canvas.client object.
                      * @returns {Object} the value previously stored
                      */
@@ -551,7 +556,51 @@
                             sr = s;
                         }
                         return sr;
+                    },
+                    /**
+                     * @function
+                     * @public
+                     * @name Sfdc.canvas.client#refreshSignedRequest
+                     * @description Refresh the signed request. Obtain a new signed request on demand. Note the
+                     * authentication mechanism of the canvas app must be set to SignedRequest and not OAuth.
+                     * @param {Function} clientscb The client's callback function to receive the base64 encoded signed request.
+                     * @example
+                     * // Gets a signed request on demand.
+                     *  Sfdc.canvas.client.refreshSignedRequest(function(data) {
+                     *      if (data.status === 200) {
+                     *          var signedRequest =  data.payload.response;
+                     *          var part = signedRequest.split('.')[1];
+                     *          var obj = JSON.parse(Sfdc.canvas.decode(part));
+                     *      }
+                     *   }
+                     */
+                    refreshSignedRequest : function(clientscb) { //, name) {
+                        // Leave in for manual testing (possibly automate this not sure how)
+                        // var id = (name) ? name : window.name.substring("canvas-frame-".length),
+                        var id = window.name.substring("canvas-frame-".length),
+                            client = {oauthToken : "null", instanceId : id, targetOrigin : "*"};
+                        postit(clientscb, {type : "refresh", accessToken : client.oauthToken, config : {client : client}});
+                    },
+                    /**
+                     * @public
+                     * @function
+                     * @name Sfdc.canvas.client#repost
+                     * @description Repost the signed request. Instruct the parent window to initiate a new post to the
+                     * canvas url. Note the authentication mechanism of the canvas app must be set to SignedRequest and not OAuth.
+                     * @param {Boolean}[refresh=false] Refreshes the signed request when set to true.
+                     * @example
+                     * // Gets a signed request on demand, without refreshing the signed request.
+                     *  Sfdc.canvas.client.repost();
+                     * // Gets a signed request on demand, first by refreshing the signed request.
+                     *  Sfdc.canvas.client.repost({refresh : true});
+                     */
+                    repost : function(refresh) {
+                        var id = window.name.substring("canvas-frame-".length),
+                            client = {oauthToken : "null", instanceId : id, targetOrigin : "*"},
+                            r= refresh || false;
+                        postit(null, {type : "repost", accessToken : client.oauthToken, config : {client : client}, refresh : r});
                     }
+
                 };
             }());
 
@@ -720,7 +769,9 @@
             subscribe : submodules.event.subscribe,
             unsubscribe : submodules.event.unsubscribe,
             publish : submodules.event.publish,
-            signedrequest : submodules.services.signedrequest
+            signedrequest : submodules.services.signedrequest,
+            refreshSignedRequest : submodules.services.refreshSignedRequest,
+            repost : submodules.services.repost
         };
     }());
 
