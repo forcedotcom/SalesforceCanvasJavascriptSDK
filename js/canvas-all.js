@@ -232,9 +232,29 @@
       chr1 = chr2 = chr3 = "";
       enc1 = enc2 = enc3 = enc4 = ""
     }while(i < str.length);
-    return output.join("")
+    return $.escapeToUTF8(output.join(""))
+  }, escapeToUTF8:function(str) {
+    var outStr = "";
+    var i = 0;
+    while(i < str.length) {
+      var c = str.charCodeAt(i++);
+      var c1;
+      if(c < 128) {
+        outStr += String.fromCharCode(c)
+      }else {
+        if(c > 191 && c < 224) {
+          c1 = str.charCodeAt(i++);
+          outStr += String.fromCharCode((c & 31) << 6 | c1 & 63)
+        }else {
+          c1 = str.charCodeAt(i++);
+          var c2 = str.charCodeAt(i++);
+          outStr += String.fromCharCode((c & 15) << 12 | (c1 & 63) << 6 | c2 & 63)
+        }
+      }
+    }
+    return outStr
   }, validEventName:function(name, res) {
-    var ns, parts = name.split(/\./), regex = /^[$A-Z_][0-9A-Z_$]*$/i, reserved = {"sfdc":true, "canvas":true, "force":true, "salesforce":true, "chatter":true};
+    var ns, parts = name.split(/\./), regex = /^[$A-Z_][0-9A-Z_$]*$/i, reserved = {"sfdc":true, "canvas":true, "force":true, "salesforce":true, "chatter":true, "s1":true};
     $.each($.isArray(res) ? res : [res], function(v) {
       reserved[v] = false
     });
@@ -321,21 +341,15 @@
     }
     function activate() {
       if(Function.prototype.bind) {
-        log = Function.prototype.bind.call(console.log, console);
-        error = Function.prototype.bind.call(console.error, console)
+        log = Function.prototype.bind.call(console.log, console)
       }else {
         log = function() {
           Function.prototype.apply.call(console.log, console, arguments)
-        };
-        error = function() {
-          Function.prototype.apply.call(console.error, console, arguments)
         }
       }
     }
     function deactivate() {
       log = function() {
-      };
-      error = function() {
       }
     }
     function enable() {
@@ -357,6 +371,13 @@
       activate()
     }else {
       deactivate()
+    }
+    if(Function.prototype.bind) {
+      error = Function.prototype.bind.call(console.error, console)
+    }else {
+      error = function() {
+        Function.prototype.apply.call(console.error, console, arguments)
+      }
     }
     return{enable:enable, disable:disable, log:log, error:error}
   }()}, readyHandlers = [], canvas = function(cb) {
@@ -743,7 +764,7 @@
   $$.module("Sfdc.canvas.xd", module)
 })(Sfdc.canvas, this);
 (function($$) {
-  var pversion, cversion = "32.0";
+  var pversion, cversion = "33.0";
   var module = function() {
     var purl;
     function getTargetOrigin(to) {
@@ -903,7 +924,7 @@
           }
         }, publish:function(client, e) {
           if(!$$.isNil(e) && !$$.isNil(e.name)) {
-            validName(e.name);
+            validName(e.name, ["s1"]);
             if(validateClient(client)) {
               postit(null, {type:"publish", config:{client:client}, event:e})
             }
