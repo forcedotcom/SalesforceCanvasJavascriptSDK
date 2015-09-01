@@ -938,4 +938,4 @@
     global.Sfdc.canvas = canvas;
 
 
-}(this));
+}(window));
