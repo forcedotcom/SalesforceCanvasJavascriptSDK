@@ -143,4 +143,4 @@
 
     $$.module('Sfdc.canvas.xd', module);
 
-}(Sfdc.canvas, this));
+}(Sfdc.canvas, window));

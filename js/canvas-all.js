@@ -465,7 +465,7 @@
     global.Sfdc = {}
   }
   global.Sfdc.canvas = canvas
-})(this);
+})(window);
 (function($$) {
   var module = function() {
     function isSecure() {
@@ -762,7 +762,7 @@
     return{post:postMessage, receive:receiveMessage, remove:removeListener}
   }();
   $$.module("Sfdc.canvas.xd", module)
-})(Sfdc.canvas, this);
+})(Sfdc.canvas, window);
 (function($$) {
   var pversion, cversion = "40.0";
   var module = function() {
