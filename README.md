@@ -2,6 +2,12 @@
 
 A JavaScript SDK used to integrate applications with the Force.com Canvas framework
 
+### Status of this SDK
+
+This SDK has moved to the [@salesforce/canvas-js-sdk][1] npm package. This version will no longer be maintained. Version 2.0.0 of this package aligns with version 1.40.1 of that package.
+
+For any questions, please [open an issue][2] on GitHub.
+
 ### Introduction
 
 Force.com Canvas is a mechanism for consuming third-party applications within Salesforce. Its goal is to connect applications at a UI level instead of just an API level. The purpose of this GitHub repository is to provide third-party applications with a JavaScript SDK so you can easily integrate canvas-style applications into Salesforce, while developing in the technology and platform of your choice. 
@@ -32,3 +38,6 @@ To use this SDK, simply include the canvas-all.js file in your page.
 
 ### Documentation
 You can find JSDoc generated documentation for the JavaScript function in the docs directory.
+
+[1]: https://www.npmjs.com/package/@salesforce/canvas-js-sdk
+[2]: https://github.com/forcedotcom/SalesforceCanvasJavascriptSDK
