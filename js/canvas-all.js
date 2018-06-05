@@ -1041,3 +1041,4 @@
   $$.module("Sfdc.canvas.client", module)
 })(Sfdc.canvas);
 
+exports.Sfdc = Sfdc;
