@@ -605,6 +605,7 @@
             }());
 
             var frame = (function() {
+                var autoGrowTimer;
                 return  {
                     /**
                      * @public
@@ -738,9 +739,10 @@
                         var ival = ($$.isNil(interval)) ? 300 : interval;
                         autog  = ($$.isNil(b)) ? true : b;
                         if (autog === false) {
+                            clearTimeout(autoGrowTimer);
                             return;
                         }
-                        setTimeout(function () {
+                        autoGrowTimer = setTimeout(function () {
                             submodules.frame.resize(client);
                             submodules.frame.autogrow(client, autog);
                         },ival);
